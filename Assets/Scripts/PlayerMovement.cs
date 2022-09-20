@@ -20,7 +20,13 @@ public class PlayerMovement : MonoBehaviour
     public float bonusGravity;
 
     private Camera _cam;
-    
+
+    public BackgroundScroller scroll;
+
+    public float bulletTime;
+
+
+
     // public int coins;
     //public Text coinsText;
 
@@ -46,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
 
+        scroll.GetComponent<BackgroundScroller>();
         //coinsText.text = coins.ToString();
     }
     private void FixedUpdate()
@@ -58,12 +65,14 @@ public class PlayerMovement : MonoBehaviour
             {
                 currentPosition.x -= speed;
                 spriteRenderer.flipX = true;
+                
             }
 
             else if (Input.GetKey(KeyCode.D))
             {
                 currentPosition.x += speed;
                 spriteRenderer.flipX = false;
+                
             }
 
             if (isGrounded)
@@ -86,11 +95,29 @@ public class PlayerMovement : MonoBehaviour
                 animator.Play("Player_Jump");
             }
         }
+              
         transform.position = currentPosition;
     }
 
     private void Update()
     {
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+        {
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                scroll.scrollSpeed = -0.3f;
+            }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+                scroll.scrollSpeed = 0.3f;
+            }
+            //else    FIX!!!!!!!!!!!!!!!!
+            //{
+               // scroll.scrollSpeed = 0;
+           // }
+        }
+        
+
         if (Input.GetKeyDown(KeyCode.W) && isGrounded)
         {
             rb2d.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
@@ -128,7 +155,7 @@ public class PlayerMovement : MonoBehaviour
                 newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);
             }
 
-            Destroy(newBullet, 1);
+            Destroy(newBullet, bulletTime);
         }
     }
 
