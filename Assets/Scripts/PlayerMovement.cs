@@ -37,15 +37,6 @@ public class PlayerMovement : MonoBehaviour
     public GameObject bulletPrefab;
     public float bulletSpeed;
 
-    /*private void Awake()
-    {
-        _cam = Camera.main;
-    }*/
-
-   
-    
-    
-
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -100,22 +91,20 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void Update()
-    {
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+    {      
+        if (Input.GetKeyDown(KeyCode.A))
         {
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                scroll.scrollSpeed = -0.3f;
-            }
-            else if (Input.GetKeyDown(KeyCode.D))
-            {
-                scroll.scrollSpeed = 0.3f;
-            }
-            //else    FIX!!!!!!!!!!!!!!!!
-            //{
-               // scroll.scrollSpeed = 0;
-           // }
+            scroll.scrollSpeed = -0.3f;
         }
+        else if (Input.GetKeyDown(KeyCode.D))
+        {
+            scroll.scrollSpeed = 0.3f;
+        }
+        //else    
+        //{
+        //    scroll.scrollSpeed = 0;
+        //}
+        
         
 
         if (Input.GetKeyDown(KeyCode.W) && isGrounded)
