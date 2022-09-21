@@ -11,7 +11,7 @@ public class PauseMenu : MonoBehaviour
 
     public GameObject pauseMenuUI;
     public GameObject settingsPanel;
-    public GameObject pauseButtons;
+    public GameObject buttonsContainer;
     public Toggle volume;
     public Slider sliderVol;
     public Toggle music;
@@ -71,14 +71,15 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    public void Settings(bool state)
+    public void Settings()
     {
-        pauseButtons.SetActive(false);
-        settingsPanel.SetActive(state);
+        settingsPanel.SetActive(true);
+        buttonsContainer.SetActive(false);
+        
     }
     public void Cross()
-    {
-        pauseButtons.SetActive(true);
+    {        
         settingsPanel.SetActive(false);
+        buttonsContainer.SetActive(true);
     }
 }

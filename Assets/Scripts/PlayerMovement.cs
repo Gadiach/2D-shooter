@@ -30,9 +30,9 @@ public class PlayerMovement : MonoBehaviour
     // public int coins;
     //public Text coinsText;
 
-    //public float healthMax;
-    //public float health;
-    //public Image healthImage;
+    public float healthMax;
+    public float health;
+    public Image healthImage;
 
     public GameObject bulletPrefab;
     public float bulletSpeed;
@@ -92,20 +92,20 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {      
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKey(KeyCode.A))
         {
             scroll.scrollSpeed = -0.3f;
         }
-        else if (Input.GetKeyDown(KeyCode.D))
+        else if (Input.GetKey(KeyCode.D))
         {
             scroll.scrollSpeed = 0.3f;
         }
-        //else    
-        //{
-        //    scroll.scrollSpeed = 0;
-        //}
-        
-        
+        else
+        {
+            scroll.scrollSpeed = 0;
+        }
+
+
 
         if (Input.GetKeyDown(KeyCode.W) && isGrounded)
         {
@@ -151,6 +151,18 @@ public class PlayerMovement : MonoBehaviour
     private void LateUpdate()
     {
         yPositionLastFrame = transform.position.y;
+        
+        health = Mathf.Clamp(health, 0, healthMax);
+
+        healthImage.fillAmount = health / healthMax;
+
+
+        yPositionLastFrame = transform.position.y;
+
+        if (health == 0)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
