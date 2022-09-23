@@ -37,6 +37,10 @@ public class PlayerMovement : MonoBehaviour
     public GameObject bulletPrefab;
     public float bulletSpeed;
 
+    public GameObject molotovPrefab;
+    public float molotovSpeed;
+    public float molotovTime;
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -94,11 +98,11 @@ public class PlayerMovement : MonoBehaviour
     {      
         if (Input.GetKey(KeyCode.A))
         {
-            scroll.scrollSpeed = -0.3f;
+            scroll.scrollSpeed = -0.5f;
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            scroll.scrollSpeed = 0.3f;
+            scroll.scrollSpeed = 0.5f;
         }
         else
         {
@@ -146,6 +150,26 @@ public class PlayerMovement : MonoBehaviour
 
             Destroy(newBullet, bulletTime);
         }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            GameObject newMolo = Instantiate(molotovPrefab, transform.position, Quaternion.identity, null);
+
+            if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.C))
+            {
+                //animator.Play("Shoot_Left");
+                newMolo.transform.position += -transform.right;
+                newMolo.GetComponent<Rigidbody2D>().AddForce(-transform.right * molotovSpeed, ForceMode2D.Impulse);
+            }
+            else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.C))
+            {
+                //animator.Play("Shoot_Right");
+                newMolo.transform.position += transform.right;
+                newMolo.GetComponent<Rigidbody2D>().AddForce(transform.right * molotovSpeed, ForceMode2D.Impulse);
+            }
+
+            Destroy(newMolo, molotovTime);
+        }
+
     }
 
     private void LateUpdate()

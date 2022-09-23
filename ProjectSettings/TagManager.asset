@@ -8,6 +8,8 @@ TagManager:
   - Bullet
   - EnemySoldier
   - EnemyBullet
+  - Tank
+  - Molotov
   layers:
   - Default
   - TransparentFX
