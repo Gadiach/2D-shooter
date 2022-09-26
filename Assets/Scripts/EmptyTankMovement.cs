@@ -25,6 +25,8 @@ public class EmptyTankMovement : MonoBehaviour
 
     private Animator animator;
 
+    private bool isAlive = true;
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -61,45 +63,56 @@ public class EmptyTankMovement : MonoBehaviour
         {
             animator.Play("Tank");
         }
-       
-        timer--;
-
-        if (timer <= 0)
+        if (isAlive)
         {
-            timer = timerMax;
-            if (currentPoint == 0)
-            {
-                Vector3 spawnPosition = transform.position;
-                spawnPosition.x += 4.5f; //якщо куля створюється сильно далеко від танка можна зробити тут меньше значення
-                spawnPosition.y += 0.5f;
+            timer--;
 
-                GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);
-                newBullet.transform.position += transform.right;
-                newBullet.GetComponent<SpriteRenderer>().flipX = true;
-                newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);
-                Destroy(newBullet, 5);
-            }
-            else if (currentPoint == 1)
+            if (timer <= 0)
             {
-                Vector3 spawnPosition = transform.position;
-                spawnPosition.x -= 4.5f; //якщо куля створюється сильно далеко від танка можна зробити тут меньше значення
-                spawnPosition.y += 0.5f;
+                timer = timerMax;
+                if (currentPoint == 0)
+                {
+                    Vector3 spawnPosition = transform.position;
+                    spawnPosition.x += 4.5f; //якщо куля створюється сильно далеко від танка можна зробити тут меньше значення
+                    spawnPosition.y += 0.5f;
 
-                GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity, null);
-                newBullet.transform.position += -transform.right;
-                newBullet.GetComponent<SpriteRenderer>().flipX = false;
-                newBullet.GetComponent<Rigidbody2D>().AddForce(-transform.right * bulletSpeed, ForceMode2D.Impulse);
-                Destroy(newBullet, 5);
+                    GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);
+                    newBullet.transform.position += transform.right;
+                    newBullet.GetComponent<SpriteRenderer>().flipX = true;
+                    newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);
+                    Destroy(newBullet, 5);
+                }
+                else if (currentPoint == 1)
+                {
+                    Vector3 spawnPosition = transform.position;
+                    spawnPosition.x -= 4.5f; //якщо куля створюється сильно далеко від танка можна зробити тут меньше значення
+                    spawnPosition.y += 0.5f;
+
+                    GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);
+                    newBullet.transform.position += -transform.right;
+                    newBullet.GetComponent<SpriteRenderer>().flipX = false;
+                    newBullet.GetComponent<Rigidbody2D>().AddForce(-transform.right * bulletSpeed, ForceMode2D.Impulse);
+                    Destroy(newBullet, 5);
+                }
             }
+        }
+        else if (!isAlive)
+        {
+            speed = 0;
+
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Player" && isAlive)
         {
             collision.gameObject.GetComponent<PlayerMovement>().health -= damage;
             collision.gameObject.GetComponent<Rigidbody2D>().AddForce(collision.gameObject.transform.up * impulse, ForceMode2D.Impulse);            
+        }
+        else if (collision.gameObject.tag == "Molotov")
+        {
+            isAlive = false;
         }
     }
 }
