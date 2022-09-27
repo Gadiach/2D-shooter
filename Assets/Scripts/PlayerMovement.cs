@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [SerializeField] private LayerMask platformLayerMask;
     public float speed;
     public float jumpForce;
     public bool isGrounded;
@@ -69,9 +70,12 @@ public class PlayerMovement : MonoBehaviour
                 spriteRenderer.flipX = false;
                 
             }
+            var isGrounded = IsGrounded();
+            Debug.Log("1" + isGrounded);
 
             if (isGrounded)
             {
+                
                 animator.Play("Player_Run");
             }
             else
@@ -81,6 +85,9 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
+            var isGrounded = IsGrounded();
+            Debug.Log("2" + isGrounded);
+
             if (isGrounded)
             {
                 animator.Play("Player_Idle");
@@ -109,7 +116,8 @@ public class PlayerMovement : MonoBehaviour
             scroll.scrollSpeed = 0;
         }
 
-
+        var isGrounded = IsGrounded();
+        Debug.Log("3" + isGrounded);
 
         if (Input.GetKeyDown(KeyCode.W) && isGrounded)
         {
@@ -121,10 +129,10 @@ public class PlayerMovement : MonoBehaviour
             rb2d.AddForce(-transform.up * bonusGravity, ForceMode2D.Impulse);
         }
 
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            animator.Play("Player_Jump");
-        }
+        //if (Input.GetKeyDown(KeyCode.W))
+        //{
+        //    animator.Play("Player_Jump");
+        //}
 
         if (transform.position.y <= -3.6)
         {
@@ -189,18 +197,26 @@ public class PlayerMovement : MonoBehaviour
         }        
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (collision.gameObject.tag == "Ground")
+    //    {
+    //        isGrounded = true;
+    //    }
+    //}
+    //private void OnCollisionExit2D(Collision2D collision)
+    //{
+    //    if (collision.gameObject.tag == "Ground")
+    //    {
+    //        isGrounded = false;
+    //    }
+    //}
+    private bool IsGrounded()
     {
-        if (collision.gameObject.tag == "Ground")
-        {
-            isGrounded = true;
-        }
-    }
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Ground")
-        {
-            isGrounded = false;
-        }
+        var groundCheck = Physics2D.Raycast(transform.position, Vector2.down, 1f, platformLayerMask);
+        Debug.Log("123" + groundCheck.collider );
+        Debug.DrawRay(transform.position, Vector2.down * 1f);
+        return groundCheck.collider != null && groundCheck.collider.CompareTag("Ground");
+
     }
 }

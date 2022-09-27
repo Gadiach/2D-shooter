@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EmptyTankMovement : MonoBehaviour
-{
+{   
+
     public Vector2[] points;
     public int currentPoint;
 
@@ -99,7 +100,7 @@ public class EmptyTankMovement : MonoBehaviour
         else if (!isAlive)
         {
             speed = 0;
-
+            transform.gameObject.tag = "Ground";
         }
     }
 

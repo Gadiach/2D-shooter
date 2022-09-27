@@ -10,6 +10,7 @@ TagManager:
   - EnemyBullet
   - Tank
   - Molotov
+  - TankBullet
   layers:
   - Default
   - TransparentFX

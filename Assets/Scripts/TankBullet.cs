@@ -17,7 +17,7 @@ public class TankBullet : MonoBehaviour
             collision.gameObject.GetComponent<Rigidbody2D>().AddForce(collision.gameObject.transform.up * impulse, ForceMode2D.Impulse);
             Destroy(gameObject);
         }
-        if (collision.gameObject.tag == "TankBullet")
+        if (collision.gameObject.tag == "TankBullet" || collision.gameObject.tag == "Tank")
         {            
             Destroy(gameObject);
         }
