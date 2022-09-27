@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EmptyTankMovement : MonoBehaviour
-{   
-
+{      
     public Vector2[] points;
     public int currentPoint;
+    
 
     public float speed;
 
@@ -39,31 +39,40 @@ public class EmptyTankMovement : MonoBehaviour
     {
         Vector2 position = transform.position;
 
+        
         if (position == points[currentPoint])
         {
             if (currentPoint == 0)
             {
-                currentPoint = 1;               
+                currentPoint = 1;
+                
             }
             else if (currentPoint == 1)
             {
-                currentPoint = 0;               
+                currentPoint = 0;
+                
             }
         }
+        
         transform.position = Vector2.MoveTowards(transform.position, points[currentPoint], speed);
 
     }
 
     private void FixedUpdate()
     {
-        if(currentPoint == 0)
-        {          
+        Vector3 tankScale = transform.localScale;
+
+        if (currentPoint == 0)
+        {           
             animator.Play("Tank_Right");
+            tankScale.x = -0.5f;
         }
         else if (currentPoint == 1)
-        {
+        {           
             animator.Play("Tank");
+            tankScale.x = 0.5f;
         }
+        transform.localScale = tankScale;
         if (isAlive)
         {
             timer--;
