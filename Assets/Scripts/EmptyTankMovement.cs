@@ -28,6 +28,8 @@ public class EmptyTankMovement : MonoBehaviour
 
     private bool isAlive = true;
 
+   
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -86,7 +88,7 @@ public class EmptyTankMovement : MonoBehaviour
                     spawnPosition.x += 4.5f; //якщо куля створюється сильно далеко від танка можна зробити тут меньше значення
                     spawnPosition.y += 0.5f;
 
-                    GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);
+                    GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);                    
                     newBullet.transform.position += transform.right;
                     newBullet.GetComponent<SpriteRenderer>().flipX = true;
                     newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);

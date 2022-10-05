@@ -11,6 +11,8 @@ TagManager:
   - Tank
   - Molotov
   - TankBullet
+  - Helicopter
+  - HelicopterBulletPrefab
   layers:
   - Default
   - TransparentFX

@@ -25,12 +25,7 @@ public class PlayerMovement : MonoBehaviour
     public BackgroundScroller scroll;
 
     public float bulletTime;
-
-
-
-    // public int coins;
-    //public Text coinsText;
-
+  
     public float healthMax;
     public float health;
     public Image healthImage;
@@ -42,6 +37,19 @@ public class PlayerMovement : MonoBehaviour
     public float molotovSpeed;
     public float molotovTime;
 
+    public GameObject PzrkRocketPrefub;
+     public enum FightRegime
+    {
+        Gun,
+        Pzrk
+    }
+
+    public FightRegime fightRegime;
+
+    private Vector2 currentTarget;
+    public float rocketSpeed;
+    private Transform helicopter;
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -50,59 +58,87 @@ public class PlayerMovement : MonoBehaviour
 
         scroll.GetComponent<BackgroundScroller>();
         //coinsText.text = coins.ToString();
+        helicopter = GameObject.FindGameObjectWithTag("Helicopter").transform;
+
     }
     private void FixedUpdate()
-    {
+    {       
         Vector3 currentPosition = transform.position;
-
-        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+        if (fightRegime == FightRegime.Gun)
         {
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
             {
-                currentPosition.x -= speed;
-                spriteRenderer.flipX = true;
-                
-            }
+                if (Input.GetKey(KeyCode.A))
+                {
+                    currentPosition.x -= speed;
+                    spriteRenderer.flipX = true;
+                }
 
-            else if (Input.GetKey(KeyCode.D))
-            {
-                currentPosition.x += speed;
-                spriteRenderer.flipX = false;
-                
-            }
-            var isGrounded = IsGrounded();
-            Debug.Log("1" + isGrounded);
+                else if (Input.GetKey(KeyCode.D))
+                {
+                    currentPosition.x += speed;
+                    spriteRenderer.flipX = false;
+                }
 
-            if (isGrounded)
-            {
-                
-                animator.Play("Player_Run");
+                var isGrounded = IsGrounded();
+
+                if (isGrounded)
+                {
+
+                    animator.Play("Player_Run");
+                }
+                else
+                {
+                    animator.Play("Player_Jump");
+                }
             }
             else
             {
-                animator.Play("Player_Jump");
-            }
-        }
-        else
-        {
-            var isGrounded = IsGrounded();
-            Debug.Log("2" + isGrounded);
+                var isGrounded = IsGrounded();
 
-            if (isGrounded)
-            {
-                animator.Play("Player_Idle");
+                if (isGrounded)
+                {
+                    animator.Play("Player_Idle");
+                }
+                else
+                {
+                    animator.Play("Player_Jump");
+                }
             }
-            else
+            
+        }
+        else if (fightRegime == FightRegime.Pzrk)
+        {
+            animator.Play("Player_PZRK");
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
             {
-                animator.Play("Player_Jump");
+                if (Input.GetKey(KeyCode.A))
+                {
+                    currentPosition.x -= speed;
+                    spriteRenderer.flipX = true;
+                }
+
+                else if (Input.GetKey(KeyCode.D))
+                {
+                    currentPosition.x += speed;
+                    spriteRenderer.flipX = false;
+                }                                                   
             }
         }
-              
         transform.position = currentPosition;
     }
 
     private void Update()
-    {      
+    {
+        if (fightRegime == FightRegime.Gun && Input.GetKeyDown(KeyCode.F))
+        {
+            fightRegime = FightRegime.Pzrk;
+        }
+        else if (fightRegime == FightRegime.Pzrk && Input.GetKeyDown(KeyCode.F))
+        {
+            fightRegime = FightRegime.Gun;
+        }
+
         if (Input.GetKey(KeyCode.A))
         {
             scroll.scrollSpeed = -0.5f;
@@ -116,8 +152,8 @@ public class PlayerMovement : MonoBehaviour
             scroll.scrollSpeed = 0;
         }
 
-        var isGrounded = IsGrounded();
-        Debug.Log("3" + isGrounded);
+        
+        var isGrounded = IsGrounded();       
 
         if (Input.GetKeyDown(KeyCode.W) && isGrounded)
         {
@@ -137,45 +173,80 @@ public class PlayerMovement : MonoBehaviour
         if (transform.position.y <= -3.6)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }       
-
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity, null);
-
-            if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                //animator.Play("Shoot_Left");
-                newBullet.transform.position += -transform.right;
-                newBullet.GetComponent<Rigidbody2D>().AddForce(-transform.right * bulletSpeed, ForceMode2D.Impulse);
-            }
-            else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.Mouse0))
-            {
-                //animator.Play("Shoot_Right");
-                newBullet.transform.position += transform.right;
-                newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);
-            }
-
-            Destroy(newBullet, bulletTime);
         }
-        if (Input.GetKeyDown(KeyCode.C))
+
+        if (fightRegime == FightRegime.Gun)
         {
-            GameObject newMolo = Instantiate(molotovPrefab, transform.position, Quaternion.identity, null);
-
-            if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.C))
+            if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                //animator.Play("Shoot_Left");
-                newMolo.transform.position += -transform.right;
-                newMolo.GetComponent<Rigidbody2D>().AddForce(-transform.right * molotovSpeed, ForceMode2D.Impulse);
-            }
-            else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.C))
-            {
-                //animator.Play("Shoot_Right");
-                newMolo.transform.position += transform.right;
-                newMolo.GetComponent<Rigidbody2D>().AddForce(transform.right * molotovSpeed, ForceMode2D.Impulse);
+                GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity, null);
+
+                if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    //animator.Play("Shoot_Left");
+                    newBullet.transform.position += -transform.right;
+                    newBullet.GetComponent<Rigidbody2D>().AddForce(-transform.right * bulletSpeed, ForceMode2D.Impulse);
+                }
+                else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    //animator.Play("Shoot_Right");
+                    newBullet.transform.position += transform.right;
+                    newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);
+                }
+
+                Destroy(newBullet, bulletTime);
             }
 
-            Destroy(newMolo, molotovTime);
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                GameObject newMolo = Instantiate(molotovPrefab, transform.position, Quaternion.identity, null);
+
+                if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.C))
+                {
+                    //animator.Play("Shoot_Left");
+                    newMolo.transform.position += -transform.right;
+                    newMolo.GetComponent<Rigidbody2D>().AddForce(-transform.right * molotovSpeed, ForceMode2D.Impulse);
+                }
+                else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.C))
+                {
+                    //animator.Play("Shoot_Right");
+                    newMolo.transform.position += transform.right;
+                    newMolo.GetComponent<Rigidbody2D>().AddForce(transform.right * molotovSpeed, ForceMode2D.Impulse);
+                }
+
+                Destroy(newMolo, molotovTime);
+            }
+        }
+        else if (fightRegime == FightRegime.Pzrk)
+        {            
+            if (Input.GetKeyDown(KeyCode.Mouse0)) //&& isLoaded)
+            {
+                Vector3 spawnPosition = transform.position;
+                
+
+                if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0))
+                {                    
+                    spawnPosition.x -= 0.01f; 
+                    spawnPosition.y += 0.9f;
+                    GameObject newBullet = Instantiate(PzrkRocketPrefub, spawnPosition, Quaternion.identity, null);
+                    newBullet.transform.position += -transform.right;
+                    newBullet.GetComponent<SpriteRenderer>().flipX = true;
+                    newBullet.transform.rotation = Quaternion.Euler(0, 0, -26);
+                    newBullet.GetComponent<Rigidbody2D>().AddForce(-transform.right * rocketSpeed, ForceMode2D.Impulse);
+                    Destroy(newBullet, bulletTime);
+                }
+                else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.Mouse0))
+                {
+                    spawnPosition.x += 0.01f;
+                    spawnPosition.y += 0.9f;
+                    GameObject newBullet = Instantiate(PzrkRocketPrefub, spawnPosition, Quaternion.identity, null);
+                    newBullet.transform.position += transform.right;
+                    newBullet.GetComponent<SpriteRenderer>().flipX = false;
+                    newBullet.transform.rotation = Quaternion.Euler(0, 0, 26);
+                    newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * rocketSpeed, ForceMode2D.Impulse);
+                    Destroy(newBullet, bulletTime);
+                }               
+            }
         }
 
     }
@@ -213,10 +284,7 @@ public class PlayerMovement : MonoBehaviour
     //}
     private bool IsGrounded()
     {
-        var groundCheck = Physics2D.Raycast(transform.position, Vector2.down, 1f, platformLayerMask);
-        Debug.Log("123" + groundCheck.collider );
-        Debug.DrawRay(transform.position, Vector2.down * 1f);
+        var groundCheck = Physics2D.Raycast(transform.position, Vector2.down, 1f, platformLayerMask);       
         return groundCheck.collider != null && groundCheck.collider.CompareTag("Ground");
-
     }
 }
