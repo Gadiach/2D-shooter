@@ -14,6 +14,8 @@ public class Helikopter : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
 
+    private Rigidbody2D rb2d;
+
     public GameObject bulletPrefab;
     private GameObject newBullet;
     public float bulletSpeed;
@@ -30,34 +32,52 @@ public class Helikopter : MonoBehaviour
 
     public float shootAmount;
 
+    public float crushSpeed;
+    private bool isCrushed = false;
+
+    private PolygonCollider2D polygonCollider2D;
+
 
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-
+        rb2d = GetComponent<Rigidbody2D>() ;
+        polygonCollider2D = GetComponent<PolygonCollider2D>();
     }
 
     private void Update()
     {
         Vector2 position = transform.position;
 
-
-        if (position == points[currentPoint])
+        if (isAlive)
         {
-            if (currentPoint == 0)
+            if (position == points[currentPoint])
             {
-                currentPoint = 1;
+                if (currentPoint == 0)
+                {
+                    currentPoint = 1;
 
-            }
-            else if (currentPoint == 1)
-            {
-                currentPoint = 0;
+                }
+                else if (currentPoint == 1)
+                {
+                    currentPoint = 0;
 
+                }
             }
+            transform.position = Vector2.MoveTowards(transform.position, points[currentPoint], speed);
         }
+        else if (!isAlive)
+        {
+            rb2d.AddForce(-transform.up * crushSpeed, ForceMode2D.Force);
+            if (isCrushed)
+            {
+                transform.gameObject.tag = "Ground";
+                rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
+            }
 
-        transform.position = Vector2.MoveTowards(transform.position, points[currentPoint], speed);
+        }
+        
 
     }
 
@@ -74,6 +94,7 @@ public class Helikopter : MonoBehaviour
             animator.Play("Helicopter_Left");
         }
         transform.localScale = helicopterScale;
+        
         if (isAlive)
         {
             timer--;
@@ -90,7 +111,7 @@ public class Helikopter : MonoBehaviour
                     StartCoroutine("PeriodicalShootLeft");
                 }
             }
-        }
+        }                
     }
     IEnumerator PeriodicalShootRight()
     {
@@ -126,24 +147,25 @@ public class Helikopter : MonoBehaviour
             yield return new WaitForSeconds(0.2f);
         }
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Pzrk")
+        {
+            isAlive = false;
+            Destroy(collision.gameObject);          
+        }
+        if (collision.gameObject.tag == "Ground")
+        {
+            isCrushed = true;            
+        }
+    }    
 }
-        //else if (!isAlive)
-        //{
-        //    speed = 0;
-        //    transform.gameObject.tag = "Ground";
-        //}
-    
+//else if (!isAlive)
+//{
+//    speed = 0;
+//    transform.gameObject.tag = "Ground";
+//}
 
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (collision.gameObject.tag == "Player" && isAlive)
-    //    {
-    //        collision.gameObject.GetComponent<PlayerMovement>().health -= damage;
-    //        collision.gameObject.GetComponent<Rigidbody2D>().AddForce(collision.gameObject.transform.up * impulse, ForceMode2D.Impulse);
-    //    }
-    //    else if (collision.gameObject.tag == "Molotov")
-    //    {
-    //        isAlive = false;
-    //    }
-    //}
+
+
 

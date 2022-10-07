@@ -13,6 +13,7 @@ TagManager:
   - TankBullet
   - Helicopter
   - HelicopterBulletPrefab
+  - Pzrk
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - UI
   - Platform
   - Tank
-  - 
+  - Helicopter
   - 
   - 
   - 

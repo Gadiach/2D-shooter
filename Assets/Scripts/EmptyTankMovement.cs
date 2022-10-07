@@ -75,6 +75,7 @@ public class EmptyTankMovement : MonoBehaviour
             tankScale.x = 0.5f;
         }
         transform.localScale = tankScale;
+        
         if (isAlive)
         {
             timer--;

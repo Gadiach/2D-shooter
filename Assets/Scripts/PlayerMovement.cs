@@ -45,21 +45,23 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public FightRegime fightRegime;
+   
+    public float rocketSpeed = 10f;
 
-    private Vector2 currentTarget;
-    public float rocketSpeed;
-    private Transform helicopter;
+    private Vector3 rocketRight = new Vector3(2, 1, 0);
+    private Vector3 rocketLeft = new Vector3(-2, 1, 0);
+
+    public bool isLoaded = true;
+    public float loadMax;
+    public float load = 3000f;
+    public Image loadImage;
 
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         rb2d = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-
-        scroll.GetComponent<BackgroundScroller>();
-        //coinsText.text = coins.ToString();
-        helicopter = GameObject.FindGameObjectWithTag("Helicopter").transform;
-
+        scroll.GetComponent<BackgroundScroller>();                
     }
     private void FixedUpdate()
     {       
@@ -164,12 +166,7 @@ public class PlayerMovement : MonoBehaviour
         {
             rb2d.AddForce(-transform.up * bonusGravity, ForceMode2D.Impulse);
         }
-
-        //if (Input.GetKeyDown(KeyCode.W))
-        //{
-        //    animator.Play("Player_Jump");
-        //}
-
+        
         if (transform.position.y <= -3.6)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -183,13 +180,13 @@ public class PlayerMovement : MonoBehaviour
 
                 if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0))
                 {
-                    //animator.Play("Shoot_Left");
+                    //Shoot_Left
                     newBullet.transform.position += -transform.right;
                     newBullet.GetComponent<Rigidbody2D>().AddForce(-transform.right * bulletSpeed, ForceMode2D.Impulse);
                 }
                 else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.Mouse0))
                 {
-                    //animator.Play("Shoot_Right");
+                    //Shoot_Right
                     newBullet.transform.position += transform.right;
                     newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);
                 }
@@ -203,13 +200,13 @@ public class PlayerMovement : MonoBehaviour
 
                 if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.C))
                 {
-                    //animator.Play("Shoot_Left");
+                    //Shoot_Left
                     newMolo.transform.position += -transform.right;
                     newMolo.GetComponent<Rigidbody2D>().AddForce(-transform.right * molotovSpeed, ForceMode2D.Impulse);
                 }
                 else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.C))
                 {
-                    //animator.Play("Shoot_Right");
+                    //Shoot_Right
                     newMolo.transform.position += transform.right;
                     newMolo.GetComponent<Rigidbody2D>().AddForce(transform.right * molotovSpeed, ForceMode2D.Impulse);
                 }
@@ -219,12 +216,12 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (fightRegime == FightRegime.Pzrk)
         {            
-            if (Input.GetKeyDown(KeyCode.Mouse0)) //&& isLoaded)
+            if (Input.GetKeyDown(KeyCode.Mouse0) && isLoaded)
             {
                 Vector3 spawnPosition = transform.position;
                 
 
-                if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0))
+                if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0)) //shoot left
                 {                    
                     spawnPosition.x -= 0.01f; 
                     spawnPosition.y += 0.9f;
@@ -232,10 +229,10 @@ public class PlayerMovement : MonoBehaviour
                     newBullet.transform.position += -transform.right;
                     newBullet.GetComponent<SpriteRenderer>().flipX = true;
                     newBullet.transform.rotation = Quaternion.Euler(0, 0, -26);
-                    newBullet.GetComponent<Rigidbody2D>().AddForce(-transform.right * rocketSpeed, ForceMode2D.Impulse);
+                    newBullet.GetComponent<Rigidbody2D>().AddForce(rocketLeft * bulletSpeed, ForceMode2D.Impulse);
                     Destroy(newBullet, bulletTime);
                 }
-                else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.Mouse0))
+                else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.Mouse0)) //shoot right
                 {
                     spawnPosition.x += 0.01f;
                     spawnPosition.y += 0.9f;
@@ -243,9 +240,10 @@ public class PlayerMovement : MonoBehaviour
                     newBullet.transform.position += transform.right;
                     newBullet.GetComponent<SpriteRenderer>().flipX = false;
                     newBullet.transform.rotation = Quaternion.Euler(0, 0, 26);
-                    newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * rocketSpeed, ForceMode2D.Impulse);
+                    newBullet.GetComponent<Rigidbody2D>().AddForce(rocketRight * bulletSpeed, ForceMode2D.Impulse);
                     Destroy(newBullet, bulletTime);
-                }               
+                }
+                load = 0f;
             }
         }
 
@@ -254,7 +252,7 @@ public class PlayerMovement : MonoBehaviour
     private void LateUpdate()
     {
         yPositionLastFrame = transform.position.y;
-        
+
         health = Mathf.Clamp(health, 0, healthMax);
 
         healthImage.fillAmount = health / healthMax;
@@ -265,26 +263,23 @@ public class PlayerMovement : MonoBehaviour
         if (health == 0)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }        
+        }
+        load += 1f;
+        load = Mathf.Clamp(load, 0, loadMax);
+        if (load == loadMax)
+        {
+            isLoaded = true;
+            loadImage.enabled = true;
+        }
+        else if (load < loadMax)
+        {
+            isLoaded = false;
+            loadImage.enabled = false;
+        }
     }
-
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (collision.gameObject.tag == "Ground")
-    //    {
-    //        isGrounded = true;
-    //    }
-    //}
-    //private void OnCollisionExit2D(Collision2D collision)
-    //{
-    //    if (collision.gameObject.tag == "Ground")
-    //    {
-    //        isGrounded = false;
-    //    }
-    //}
     private bool IsGrounded()
     {
-        var groundCheck = Physics2D.Raycast(transform.position, Vector2.down, 1f, platformLayerMask);       
+        var groundCheck = Physics2D.Raycast(transform.position, Vector2.down, 1.3f, platformLayerMask);       
         return groundCheck.collider != null && groundCheck.collider.CompareTag("Ground");
     }
 }
