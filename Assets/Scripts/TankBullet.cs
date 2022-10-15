@@ -21,5 +21,10 @@ public class TankBullet : MonoBehaviour
         {            
             Destroy(gameObject);
         }
+        else if (collision.gameObject.tag == "Ground")
+        {
+            Destroy(gameObject);
+        }
+
     }
 }

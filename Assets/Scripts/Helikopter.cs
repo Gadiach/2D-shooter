@@ -72,26 +72,43 @@ public class Helikopter : MonoBehaviour
             rb2d.AddForce(-transform.up * crushSpeed, ForceMode2D.Force);
             if (isCrushed)
             {
-                transform.gameObject.tag = "Ground";
+                Vector3 temp = transform.position;
+                transform.gameObject.tag = "Ground";                
+                temp.y = -0.81f;
+                transform.position= temp;
                 rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
             }
-
         }
-        
-
     }
 
     private void FixedUpdate()
     {
         Vector3 helicopterScale = transform.localScale;
-
-        if (currentPoint == 0)
+        if (!isCrushed)
         {
-            animator.Play("Helicopter_Right");
+            if (currentPoint == 0)
+            {
+                animator.Play("Helicopter_Right");
+                if (isCrushed)
+                {
+                    animator.Play("Helicopter_Destroyed");
+                }
+            }
+            else if (currentPoint == 1)
+            {
+                animator.Play("Helicopter_Left");
+            }
         }
-        else if (currentPoint == 1)
+        else if (isCrushed)
         {
-            animator.Play("Helicopter_Left");
+            if (currentPoint == 0)
+            {
+                animator.Play("Helicopter_Destroyed_Right");
+            }
+            else if (currentPoint == 1)
+            {
+                animator.Play("Helicopter_Destroyed");
+            }
         }
         transform.localScale = helicopterScale;
         

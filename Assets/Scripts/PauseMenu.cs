@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
-    public static bool GameIsPaused = false;
+    public bool GameIsPaused = false;
 
     public GameObject pauseMenuUI;
     public GameObject settingsPanel;
@@ -16,19 +16,18 @@ public class PauseMenu : MonoBehaviour
     public Slider sliderVol;
     public Toggle music;
     public Slider sliderMus;
+    public GameObject FAQImage;
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+
+        if (Input.GetKeyDown(KeyCode.Escape) && GameIsPaused)
         {
-            if (GameIsPaused)
-            {
-                Resume();
-            }
-            else
-            {
-                Pause();
-            }
+            Resume();              
+        }
+        else if (Input.GetKeyDown(KeyCode.Escape) && !GameIsPaused)
+        {          
+            Pause();            
         }
 
         if (sliderVol.value == 0)
@@ -58,7 +57,7 @@ public class PauseMenu : MonoBehaviour
         GameIsPaused = false;
     }
 
-    void Pause()
+    public void Pause()
     {
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
@@ -82,4 +81,17 @@ public class PauseMenu : MonoBehaviour
         settingsPanel.SetActive(false);
         buttonsContainer.SetActive(true);
     }
+
+    public void FAQ()
+    {
+        buttonsContainer.SetActive(false);
+        FAQImage.SetActive(true);
+    }
+
+    public void Cross2()
+    {
+        buttonsContainer.SetActive(true);
+        FAQImage.SetActive(false);
+    }
+
 }

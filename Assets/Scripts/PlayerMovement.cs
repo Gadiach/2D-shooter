@@ -111,7 +111,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (fightRegime == FightRegime.Pzrk)
         {
-            animator.Play("Player_PZRK");
+            
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
             {
                 if (Input.GetKey(KeyCode.A))
@@ -124,8 +124,11 @@ public class PlayerMovement : MonoBehaviour
                 {
                     currentPosition.x += speed;
                     spriteRenderer.flipX = false;
-                }                                                   
+                }
+                animator.Play("Player_PZRK");
             }
+            else 
+            animator.Play("Player_PZRK_Idle");
         }
         transform.position = currentPosition;
     }
@@ -134,7 +137,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (fightRegime == FightRegime.Gun && Input.GetKeyDown(KeyCode.F))
         {
-            fightRegime = FightRegime.Pzrk;
+            fightRegime = FightRegime.Pzrk;           
         }
         else if (fightRegime == FightRegime.Pzrk && Input.GetKeyDown(KeyCode.F))
         {
@@ -215,12 +218,11 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         else if (fightRegime == FightRegime.Pzrk)
-        {            
+        {           
             if (Input.GetKeyDown(KeyCode.Mouse0) && isLoaded)
             {
                 Vector3 spawnPosition = transform.position;
                 
-
                 if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0)) //shoot left
                 {                    
                     spawnPosition.x -= 0.01f; 
