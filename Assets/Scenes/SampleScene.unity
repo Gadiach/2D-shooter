@@ -339,7 +339,7 @@ MonoBehaviour:
   - {x: -378.05, y: 0.44}
   - {x: -388.19, y: 0.44}
   currentPoint: 0
-  speed: 0.005
+  speed: 3
   health: 100
   bulletPrefab: {fileID: 8987898367995283601, guid: b632870f2575ca24f8555e8bfae1102c, type: 3}
   bulletSpeed: 15
@@ -736,7 +736,7 @@ MonoBehaviour:
   - {x: -62.43, y: -0.49}
   - {x: -102.1, y: -0.49}
   currentPoint: 0
-  speed: 0.005
+  speed: 2
   health: 100
   bulletPrefab: {fileID: 8987898367995283601, guid: b632870f2575ca24f8555e8bfae1102c, type: 3}
   bulletSpeed: 15
@@ -10584,7 +10584,7 @@ MonoBehaviour:
   - {x: -52.81, y: -0.86}
   - {x: -43.47, y: -0.86}
   currentPoint: 0
-  speed: 0.005
+  speed: 3
   bulletPrefab: {fileID: 825222858947719351, guid: 2de154f91a77a834eaa842e91f17ed0f, type: 3}
   bulletSpeed: 10
   timerMax: 180
@@ -11384,7 +11384,7 @@ MonoBehaviour:
   - {x: 28.45, y: -0.86}
   - {x: 40.62, y: -0.86}
   currentPoint: 0
-  speed: 0.005
+  speed: 3
   bulletPrefab: {fileID: 825222858947719351, guid: 2de154f91a77a834eaa842e91f17ed0f, type: 3}
   bulletSpeed: 10
   timerMax: 160
@@ -11791,7 +11791,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 677198137}
   m_LocalRotation: {x: 0, y: 0, z: 0.2125188, w: 0.97715706}
-  m_LocalPosition: {x: -128.7, y: 9.3, z: 0}
+  m_LocalPosition: {x: -132.6, y: 9.5, z: 0}
   m_LocalScale: {x: 2.8, y: 2.670286, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11814,7 +11814,7 @@ MonoBehaviour:
   - {x: -128.7, y: 5.73}
   - {x: -157, y: 5.73}
   currentPoint: 0
-  speed: 0.01
+  speed: 2
   health: 100
   bulletPrefab: {fileID: 6721916568309992519, guid: 50904d876ea3c86499a8b59ae3491bf4, type: 3}
   bulletSpeed: 15
@@ -12946,7 +12946,7 @@ MonoBehaviour:
   - {x: -32.85, y: -0.86}
   - {x: -18.45, y: -0.86}
   currentPoint: 0
-  speed: 0.005
+  speed: 3
   bulletPrefab: {fileID: 825222858947719351, guid: 2de154f91a77a834eaa842e91f17ed0f, type: 3}
   bulletSpeed: 10
   timerMax: 160
@@ -13443,7 +13443,7 @@ MonoBehaviour:
   - {x: -389.7, y: 5.73}
   - {x: -407.46, y: 5.73}
   currentPoint: 0
-  speed: 0.01
+  speed: 1.5
   health: 100
   bulletPrefab: {fileID: 6721916568309992519, guid: 50904d876ea3c86499a8b59ae3491bf4, type: 3}
   bulletSpeed: 15
@@ -13988,7 +13988,7 @@ MonoBehaviour:
   - {x: -327.33, y: 0.12}
   - {x: -310.8, y: 0.12}
   currentPoint: 0
-  speed: 0.005
+  speed: 3
   bulletPrefab: {fileID: 825222858947719351, guid: 2de154f91a77a834eaa842e91f17ed0f, type: 3}
   bulletSpeed: 10
   timerMax: 160
@@ -14749,7 +14749,7 @@ MonoBehaviour:
   - {x: -220.6, y: 5.73}
   - {x: -237.9, y: 5.73}
   currentPoint: 0
-  speed: 0.01
+  speed: 2
   health: 100
   bulletPrefab: {fileID: 6721916568309992519, guid: 50904d876ea3c86499a8b59ae3491bf4, type: 3}
   bulletSpeed: 15
@@ -14951,7 +14951,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1203746624}
   m_LocalRotation: {x: 0, y: 0, z: 0.2125188, w: 0.97715706}
-  m_LocalPosition: {x: -220.6, y: 8.2, z: 0}
+  m_LocalPosition: {x: -224.5, y: 7.8, z: 0}
   m_LocalScale: {x: 2.8, y: 2.670286, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15945,7 +15945,7 @@ MonoBehaviour:
   - {x: -431.2, y: 5.73}
   - {x: -444.8, y: 5.73}
   currentPoint: 0
-  speed: 0.01
+  speed: 3
   health: 100
   bulletPrefab: {fileID: 6721916568309992519, guid: 50904d876ea3c86499a8b59ae3491bf4, type: 3}
   bulletSpeed: 15
@@ -16147,7 +16147,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1474539750}
   m_LocalRotation: {x: 0, y: 0, z: 0.2125188, w: 0.97715706}
-  m_LocalPosition: {x: -431.2, y: 9, z: 0}
+  m_LocalPosition: {x: -436.2, y: 8.8, z: 0}
   m_LocalScale: {x: 2.8, y: 2.670286, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -16212,7 +16212,7 @@ MonoBehaviour:
   - {x: -456.89, y: 1.41}
   currentPoint: 0
   stage: 0
-  speed: 0.5
+  speed: 1.5
   speedAttack: 0.015
   speedPatrol: 0.003
   distanceToAttack: 10
@@ -16478,7 +16478,7 @@ MonoBehaviour:
   - {x: -356.21, y: 4.16}
   - {x: -347.59, y: 4.16}
   currentPoint: 0
-  speed: 0.005
+  speed: 3
   bulletPrefab: {fileID: 825222858947719351, guid: 2de154f91a77a834eaa842e91f17ed0f, type: 3}
   bulletSpeed: 10
   timerMax: 160
@@ -16714,7 +16714,7 @@ MonoBehaviour:
   - {x: -165.5, y: -0.49}
   - {x: -187.4, y: -0.49}
   currentPoint: 0
-  speed: 0.005
+  speed: 2
   health: 100
   bulletPrefab: {fileID: 8987898367995283601, guid: b632870f2575ca24f8555e8bfae1102c, type: 3}
   bulletSpeed: 15
@@ -16979,7 +16979,7 @@ MonoBehaviour:
   - {x: -217.3, y: -0.49}
   - {x: -280.4, y: -0.49}
   currentPoint: 0
-  speed: 0.005
+  speed: 2
   health: 100
   bulletPrefab: {fileID: 8987898367995283601, guid: b632870f2575ca24f8555e8bfae1102c, type: 3}
   bulletSpeed: 15
@@ -17653,7 +17653,7 @@ MonoBehaviour:
   - {x: -2.27, y: -0.86}
   - {x: 13.12, y: -0.86}
   currentPoint: 0
-  speed: 0.005
+  speed: 3
   bulletPrefab: {fileID: 825222858947719351, guid: 2de154f91a77a834eaa842e91f17ed0f, type: 3}
   bulletSpeed: 10
   timerMax: 160

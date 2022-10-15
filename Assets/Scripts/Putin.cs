@@ -96,7 +96,7 @@ public class Putin : MonoBehaviour
                 }
             }
 
-            transform.position = Vector2.MoveTowards(transform.position, currentTarget, speed);
+            transform.position = Vector2.MoveTowards(transform.position, currentTarget, speed * Time.deltaTime);
 
             if (position.x > currentTarget.x)
             {

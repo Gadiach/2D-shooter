@@ -65,7 +65,7 @@ public class Helikopter : MonoBehaviour
 
                 }
             }
-            transform.position = Vector2.MoveTowards(transform.position, points[currentPoint], speed);
+            transform.position = Vector2.MoveTowards(transform.position, points[currentPoint], speed * Time.deltaTime);
         }
         else if (!isAlive)
         {

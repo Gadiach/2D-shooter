@@ -42,7 +42,7 @@ public class EnemyPatrol : MonoBehaviour
                 spriteRenderer.flipX = true;
             }
         }
-        transform.position = Vector2.MoveTowards(transform.position, points[currentPoint], speed);
+        transform.position = Vector2.MoveTowards(transform.position, points[currentPoint], speed * Time.deltaTime);
 
     }
 
