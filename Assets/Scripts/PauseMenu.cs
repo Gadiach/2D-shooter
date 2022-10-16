@@ -17,9 +17,12 @@ public class PauseMenu : MonoBehaviour
     public Toggle music;
     public Slider sliderMus;
     public GameObject FAQImage;
+    public MusicControl musicControl;
+    
 
     void Update()
     {
+        musicControl.AudioSource.volume = sliderMus.value;
 
         if (Input.GetKeyDown(KeyCode.Escape) && GameIsPaused)
         {

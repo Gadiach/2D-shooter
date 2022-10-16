@@ -2,12 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 public class MusicControl : MonoBehaviour
 {  
 
-    private AudioSource AudioSource;
+    public AudioSource AudioSource;
 
     private void Awake()
     {
@@ -20,6 +21,19 @@ public class MusicControl : MonoBehaviour
         else
         {
             AudioSource.enabled = false;
-        }
+        }    
     }
+    private void Start()
+    {
+        
+    }
+    private void Update()
+    {
+       
+
+    }
+
+   
+
+    
 }
