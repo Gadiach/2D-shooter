@@ -28,12 +28,15 @@ public class EmptyTankMovement : MonoBehaviour
 
     private bool isAlive = true;
 
-   
+    private Rigidbody2D rb2d;
+
+
 
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        rb2d = GetComponent<Rigidbody2D>();
 
     }
 
@@ -126,6 +129,7 @@ public class EmptyTankMovement : MonoBehaviour
         else if (collision.gameObject.tag == "Molotov")
         {
             isAlive = false;
+            rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
         }
     }
 }
