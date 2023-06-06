@@ -17,12 +17,11 @@ public class PauseMenu : MonoBehaviour
     public Toggle music;
     public Slider sliderMus;
     public GameObject FAQImage;
-    public MusicControl musicControl;
+    
     
 
     void Update()
-    {
-        musicControl.AudioSource.volume = sliderMus.value;
+    {        
 
         if (Input.GetKeyDown(KeyCode.Escape) && GameIsPaused)
         {
@@ -31,26 +30,7 @@ public class PauseMenu : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Escape) && !GameIsPaused)
         {          
             Pause();            
-        }
-
-        if (sliderVol.value == 0)
-        {
-            volume.isOn = false;
-        }
-        else if (sliderVol.value > 0)
-        {
-            volume.isOn = true;
-        }
-
-
-        if (sliderMus.value == 0)
-        {
-            music.isOn = false;
-        }
-        else if (sliderMus.value > 0)
-        {
-            music.isOn = true;
-        }
+        }        
     }
 
     public void Resume()

@@ -56,6 +56,10 @@ public class PlayerMovement : MonoBehaviour
     public float load = 3000f;
     public Image loadImage;
 
+    [SerializeField] private AudioSource shootAKSoundEffect;
+    [SerializeField] private AudioSource shootPZRKSoundEffect;
+    [SerializeField] private AudioSource throwMolotovSoundEffect;
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -67,32 +71,44 @@ public class PlayerMovement : MonoBehaviour
     {       
         Vector3 currentPosition = transform.position;
         if (fightRegime == FightRegime.Gun)
-        {
+        {            
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
             {
                 if (Input.GetKey(KeyCode.A))
                 {
                     currentPosition.x -= speed;
-                    spriteRenderer.flipX = true;
+                    spriteRenderer.flipX = true;                   
                 }
 
                 else if (Input.GetKey(KeyCode.D))
                 {
                     currentPosition.x += speed;
-                    spriteRenderer.flipX = false;
+                    spriteRenderer.flipX = false;                    
                 }
 
                 var isGrounded = IsGrounded();
 
                 if (isGrounded)
                 {
+                    if(Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.S))
+                    {
+                        animator.Play("Player_Crawl");
+                    }
+                    else if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S))
+                    {
+                        animator.Play("Player_Crawl");
+                    }
+                    else
+                    {
+                        animator.Play("Player_Run");
+                    }
 
-                    animator.Play("Player_Run");
                 }
-                else
+                
+                if(!isGrounded)
                 {
                     animator.Play("Player_Jump");
-                }
+                }               
             }
             else
             {
@@ -100,9 +116,16 @@ public class PlayerMovement : MonoBehaviour
 
                 if (isGrounded)
                 {
-                    animator.Play("Player_Idle");
+                    if (Input.GetKey(KeyCode.S))
+                    {
+                        animator.Play("Player_Crawl_Idle");
+                    }
+                    else
+                    {
+                        animator.Play("Player_Idle");
+                    }
                 }
-                else
+                else if (!isGrounded)
                 {
                     animator.Play("Player_Jump");
                 }
@@ -110,8 +133,7 @@ public class PlayerMovement : MonoBehaviour
             
         }
         else if (fightRegime == FightRegime.Pzrk)
-        {
-            
+        {          
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
             {
                 if (Input.GetKey(KeyCode.A))
@@ -180,6 +202,7 @@ public class PlayerMovement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Mouse0))
             {
                 GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity, null);
+                shootAKSoundEffect.Play();
 
                 if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0))
                 {
@@ -200,6 +223,7 @@ public class PlayerMovement : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.C))
             {
                 GameObject newMolo = Instantiate(molotovPrefab, transform.position, Quaternion.identity, null);
+                throwMolotovSoundEffect.Play();
 
                 if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.C))
                 {
@@ -221,6 +245,7 @@ public class PlayerMovement : MonoBehaviour
         {           
             if (Input.GetKeyDown(KeyCode.Mouse0) && isLoaded)
             {
+                shootPZRKSoundEffect.Play();
                 Vector3 spawnPosition = transform.position;
                 
                 if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0)) //shoot left
@@ -245,10 +270,10 @@ public class PlayerMovement : MonoBehaviour
                     newBullet.GetComponent<Rigidbody2D>().AddForce(rocketRight * bulletSpeed, ForceMode2D.Impulse);
                     Destroy(newBullet, bulletTime);
                 }
+
                 load = 0f;
             }
         }
-
     }
 
     private void LateUpdate()
