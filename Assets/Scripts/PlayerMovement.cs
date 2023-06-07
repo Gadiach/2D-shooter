@@ -58,8 +58,11 @@ public class PlayerMovement : MonoBehaviour
 
     [SerializeField] private AudioSource shootAKSoundEffect;
     [SerializeField] private AudioSource shootPZRKSoundEffect;
-    [SerializeField] private AudioSource throwMolotovSoundEffect;
+    [SerializeField] private AudioSource throwMolotovSoundEffect;  
+    [SerializeField] private AudioSource jumpSoundEffect;
 
+    public AudioClip[] audioClips;
+  
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -73,15 +76,15 @@ public class PlayerMovement : MonoBehaviour
         if (fightRegime == FightRegime.Gun)
         {            
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
-            {
+            {               
                 if (Input.GetKey(KeyCode.A))
-                {
+                {                    
                     currentPosition.x -= speed;
                     spriteRenderer.flipX = true;                   
                 }
 
                 else if (Input.GetKey(KeyCode.D))
-                {
+                {                   
                     currentPosition.x += speed;
                     spriteRenderer.flipX = false;                    
                 }
@@ -99,7 +102,7 @@ public class PlayerMovement : MonoBehaviour
                         animator.Play("Player_Crawl");
                     }
                     else
-                    {
+                    {                        
                         animator.Play("Player_Run");
                     }
 
@@ -107,6 +110,7 @@ public class PlayerMovement : MonoBehaviour
                 
                 if(!isGrounded)
                 {
+                    jumpSoundEffect.Play();
                     animator.Play("Player_Jump");
                 }               
             }
@@ -309,4 +313,14 @@ public class PlayerMovement : MonoBehaviour
         var groundCheck = Physics2D.Raycast(transform.position, Vector2.down, 1.3f, platformLayerMask);       
         return groundCheck.collider != null && groundCheck.collider.CompareTag("Ground");
     }
+
+    public void PlaySound1()
+    {
+        jumpSoundEffect.PlayOneShot(audioClips[0]);             
+    }
+
+    public void PlaySound2()
+    {
+        jumpSoundEffect.PlayOneShot(audioClips[1]);
+    }   
 }
