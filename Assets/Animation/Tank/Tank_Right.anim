@@ -20,7 +20,11 @@ AnimationClip:
   m_PPtrCurves:
   - curve:
     - time: 0
-      value: {fileID: 21300000, guid: 822d97005c41c184992cb4e9079bb0a6, type: 3}
+      value: {fileID: 21300000, guid: 238c6ef5ab555fe41a2fed8767783f55, type: 3}
+    - time: 0.05
+      value: {fileID: 21300000, guid: cb28dc18ac9cd86489be1aebd09ef7cf, type: 3}
+    - time: 0.1
+      value: {fileID: 21300000, guid: 238c6ef5ab555fe41a2fed8767783f55, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -40,13 +44,15 @@ AnimationClip:
       customType: 23
       isPPtrCurve: 1
     pptrCurveMapping:
-    - {fileID: 21300000, guid: 822d97005c41c184992cb4e9079bb0a6, type: 3}
+    - {fileID: 21300000, guid: 238c6ef5ab555fe41a2fed8767783f55, type: 3}
+    - {fileID: 21300000, guid: cb28dc18ac9cd86489be1aebd09ef7cf, type: 3}
+    - {fileID: 21300000, guid: 238c6ef5ab555fe41a2fed8767783f55, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.016666668
+    m_StopTime: 0.11666667
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -65,4 +71,11 @@ AnimationClip:
   m_EulerEditorCurves: []
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0
+    functionName: PlayFootstepSound
+    data: 
+    objectReferenceParameter: {fileID: 8300000, guid: a9f6893f69099ab45abdbf10e160e5b0, type: 3}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

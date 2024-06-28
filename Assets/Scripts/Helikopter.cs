@@ -1,9 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Helikopter : MonoBehaviour
+public class Helikopter : Sounds
 {
+    public Transform playerTransform;  // Посилання на головний герой
+    public float maxDistance = 10f;   
+
     public Vector2[] points;
     public int currentPoint;
 
@@ -28,7 +30,7 @@ public class Helikopter : MonoBehaviour
 
     private Animator animator;
 
-    private bool isAlive = true;
+    public bool isAlive = true;
 
     public float shootAmount;
 
@@ -36,22 +38,34 @@ public class Helikopter : MonoBehaviour
     private bool isCrushed = false;
 
     private PolygonCollider2D polygonCollider2D;
-
-
+    
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         rb2d = GetComponent<Rigidbody2D>() ;
         polygonCollider2D = GetComponent<PolygonCollider2D>();
+
     }
 
     private void Update()
     {
+        audioSource1.volume = 0.1f;
+        audioSource2.volume = 0.2f;
         Vector2 position = transform.position;
 
         if (isAlive)
         {
+            if (audioSource != null && playerTransform != null)
+            {
+                float distance = Vector2.Distance(playerTransform.position, transform.position);
+                float maxVolume = 0.5f; // New maximum volume level
+                float volume = Mathf.Clamp01(1f - distance / maxDistance) * maxVolume;
+
+                // Встановлення нового значення гучності
+                audioSource.volume = volume;
+            }
+
             if (position == points[currentPoint])
             {
                 if (currentPoint == 0)
@@ -74,7 +88,7 @@ public class Helikopter : MonoBehaviour
             {
                 Vector3 temp = transform.position;
                 transform.gameObject.tag = "Ground";                
-                temp.y = -0.81f;
+                temp.y = -1.2f;
                 transform.position= temp;
                 rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
             }
@@ -121,10 +135,12 @@ public class Helikopter : MonoBehaviour
                 timer = timerMax;
                 if (currentPoint == 0)
                 {
+                    PlaySoundAudioSrc2(audioSource2);
                     StartCoroutine("PeriodicalShootRight");
                 }
                 else if (currentPoint == 1)
                 {
+                    PlaySoundAudioSrc2(audioSource2);
                     StartCoroutine("PeriodicalShootLeft");
                 }
             }

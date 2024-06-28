@@ -480,4 +480,11 @@ AnimationClip:
     script: {fileID: 0}
   m_HasGenericRootTransform: 1
   m_HasMotionFloatCurves: 0
-  m_Events: []
+  m_Events:
+  - time: 0
+    functionName: PlayFootstepSound
+    data: 
+    objectReferenceParameter: {fileID: 8300000, guid: 7c7d97c0a9f2959439c70840252a601d, type: 3}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0

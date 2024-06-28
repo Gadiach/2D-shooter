@@ -17,6 +17,7 @@ TagManager:
   - Putin
   - MainMusicSlider
   - MainMusicToggle
+  - SoundObject
   layers:
   - Default
   - TransparentFX
@@ -27,7 +28,7 @@ TagManager:
   - Platform
   - Tank
   - Helicopter
-  - 
+  - Smoke
   - 
   - 
   - 

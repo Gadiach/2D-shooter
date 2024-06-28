@@ -1,9 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyPatrol : MonoBehaviour
+public class EnemyPatrol : Sounds
 {
+    public Transform playerTransform;  // Посилання на головний герой
+    public float maxDistance = 10f;    
+
     public Vector2[] points;
     public int currentPoint;
 
@@ -11,8 +12,7 @@ public class EnemyPatrol : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
 
-    public GameObject bulletPrefab;
-    private GameObject newBullet;
+    public GameObject bulletPrefab;    
     public float bulletSpeed;
 
     private float timer;
@@ -26,6 +26,15 @@ public class EnemyPatrol : MonoBehaviour
 
     private void Update()
     {
+        if (audioSource != null && playerTransform != null)
+        {
+            float distance = Vector2.Distance(playerTransform.position, transform.position);
+            float volume = Mathf.Clamp01(1f - distance / maxDistance);           
+
+            // Встановлення нового значення гучності
+            audioSource.volume = volume;
+        }      
+
         Vector2 position = transform.position;
 
         if (position == points[currentPoint])
@@ -55,6 +64,7 @@ public class EnemyPatrol : MonoBehaviour
             timer = timerMax;
             if (currentPoint == 0)
             {
+                PlaySound(sounds[0]);
                 GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity, null);
                 newBullet.transform.position += -transform.right;                
                 newBullet.GetComponent<Rigidbody2D>().AddForce(-transform.right * bulletSpeed, ForceMode2D.Impulse);
@@ -62,6 +72,7 @@ public class EnemyPatrol : MonoBehaviour
             }
             else if (currentPoint == 1)
             {
+                PlaySound(sounds[0]);
                 GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity, null);
                 newBullet.transform.position += transform.right;                
                 newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);
@@ -69,12 +80,4 @@ public class EnemyPatrol : MonoBehaviour
             }
         }
     }
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    if (collision.gameObject.tag == "Bullet")
-    //    {
-    //        Destroy(collision.gameObject);
-    //        Destroy(gameObject);
-    //    }
-    //}
 }

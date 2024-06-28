@@ -5,6 +5,7 @@ using UnityEngine;
 public class MolotovScript : MonoBehaviour
 {
     private SpriteRenderer bulletSpriteRenderer;
+    [SerializeField] private GameObject firePrefab;
 
     public float damage = 50f;
     public float impulse;
@@ -25,7 +26,8 @@ public class MolotovScript : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.tag == "Tank" || collision.gameObject.tag == "Ground")
-        {            
+        {
+            Instantiate(firePrefab, transform.position,firePrefab.transform.rotation);
             Destroy(gameObject);           
         }
     }

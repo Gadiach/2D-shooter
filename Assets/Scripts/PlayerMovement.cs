@@ -1,15 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : Sounds
 {
     [SerializeField] private LayerMask platformLayerMask;
     public float speed;
     public float jumpForce;
     public bool isGrounded;
+    public bool isCrawled;
     public float impulseSpeed;
 
     private SpriteRenderer spriteRenderer;
@@ -19,8 +18,6 @@ public class PlayerMovement : MonoBehaviour
 
     private float yPositionLastFrame;
     public float bonusGravity;
-
-    private Camera _cam;
 
     public BackgroundScroller scroll;
 
@@ -37,11 +34,13 @@ public class PlayerMovement : MonoBehaviour
     public float molotovSpeed;
     public float molotovTime;
 
+
     public GameObject PzrkRocketPrefub;
      public enum FightRegime
     {
         Gun,
-        Pzrk
+        Pzrk,
+        Molotov
     }
 
     public FightRegime fightRegime;
@@ -54,14 +53,7 @@ public class PlayerMovement : MonoBehaviour
     public bool isLoaded = true;
     public float loadMax;
     public float load = 3000f;
-    public Image loadImage;
-
-    [SerializeField] private AudioSource shootAKSoundEffect;
-    [SerializeField] private AudioSource shootPZRKSoundEffect;
-    [SerializeField] private AudioSource throwMolotovSoundEffect;  
-    [SerializeField] private AudioSource jumpSoundEffect;
-
-    public AudioClip[] audioClips;
+    public Image loadImage;  
   
     private void Start()
     {
@@ -76,11 +68,11 @@ public class PlayerMovement : MonoBehaviour
         if (fightRegime == FightRegime.Gun)
         {            
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
-            {               
+            {                
                 if (Input.GetKey(KeyCode.A))
                 {                    
                     currentPosition.x -= speed;
-                    spriteRenderer.flipX = true;                   
+                    spriteRenderer.flipX = true;                    
                 }
 
                 else if (Input.GetKey(KeyCode.D))
@@ -89,55 +81,111 @@ public class PlayerMovement : MonoBehaviour
                     spriteRenderer.flipX = false;                    
                 }
 
-                var isGrounded = IsGrounded();
+                isGrounded = IsGrounded();
 
                 if (isGrounded)
                 {
-                    if(Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.S))
+                    if(Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S) )
                     {
-                        animator.Play("Player_Crawl");
-                    }
-                    else if (Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S))
-                    {
-                        animator.Play("Player_Crawl");
+                        isCrawled = true;
+                        animator.Play("Player_Crawl");                        
                     }
                     else
                     {                        
                         animator.Play("Player_Run");
+                        isCrawled = false;                        
                     }
-
                 }
                 
                 if(!isGrounded)
-                {
-                    jumpSoundEffect.Play();
-                    animator.Play("Player_Jump");
+                {                   
+                    animator.Play("Player_Jump");                    
                 }               
             }
             else
             {
-                var isGrounded = IsGrounded();
+                isGrounded = IsGrounded();
 
                 if (isGrounded)
                 {
                     if (Input.GetKey(KeyCode.S))
                     {
+                        isCrawled = true;
                         animator.Play("Player_Crawl_Idle");
                     }
                     else
                     {
+                        isCrawled = false;
                         animator.Play("Player_Idle");
                     }
                 }
                 else if (!isGrounded)
                 {
-                    animator.Play("Player_Jump");
+                    animator.Play("Player_Jump");                   
                 }
-            }
-            
+            }            
         }
         else if (fightRegime == FightRegime.Pzrk)
-        {          
+        {
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
+            {
+                if (Input.GetKey(KeyCode.A))
+                {
+                    currentPosition.x -= speed;
+                    spriteRenderer.flipX = true;
+                }
+                else if (Input.GetKey(KeyCode.D))
+                {
+                    currentPosition.x += speed;
+                    spriteRenderer.flipX = false;
+                }
+
+                isGrounded = IsGrounded();
+
+                if (isGrounded)
+                {
+                    if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S))
+                    {
+                        isCrawled = true;
+                        animator.Play("Player_PZRK_crawl");
+                    }                   
+                    else
+                    {
+                        animator.Play("Player_PZRK_run");
+                        isCrawled = false;
+                    }
+                }
+
+                if (!isGrounded)
+                {
+                    animator.Play("Player_PZRK_jump");
+                }
+            }
+            else
+            {
+                isGrounded = IsGrounded();
+
+                if (isGrounded)
+                {
+                    if (Input.GetKey(KeyCode.S))
+                    {
+                        isCrawled = true;
+                        animator.Play("Player_PZRK_crawl_idle");
+                    }
+                    else
+                    {
+                        isCrawled = false;
+                        animator.Play("Player_PZRK_Idle");
+                    }
+                }
+                else if (!isGrounded)
+                {
+                    animator.Play("Player_PZRK_jump");
+                }
+            }
+        }
+        else if (fightRegime == FightRegime.Molotov)
+        {
             if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
             {
                 if (Input.GetKey(KeyCode.A))
@@ -151,44 +199,69 @@ public class PlayerMovement : MonoBehaviour
                     currentPosition.x += speed;
                     spriteRenderer.flipX = false;
                 }
-                animator.Play("Player_PZRK");
+
+                isGrounded = IsGrounded();
+
+                if (isGrounded)
+                {
+                    if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D) && Input.GetKey(KeyCode.S))
+                    {
+                        isCrawled = true;
+                        animator.Play("Player_Molotov_crawl");
+                    }
+                    else
+                    {
+                        animator.Play("Player_Molotov_Run");
+                        isCrawled = false;
+                    }
+                }
+
+                if (!isGrounded)
+                {
+                    animator.Play("Player_Molotov_Jump");
+                }
             }
-            else 
-            animator.Play("Player_PZRK_Idle");
+            else
+            {
+                isGrounded = IsGrounded();
+
+                if (isGrounded)
+                {
+                    if (Input.GetKey(KeyCode.S))
+                    {
+                        isCrawled = true;
+                        animator.Play("Player_Molotov_crawl_idle");
+                    }
+                    else
+                    {
+                        isCrawled = false;
+                        animator.Play("Player_Molotov_Idle");
+                    }
+                }
+                else if (!isGrounded)
+                {
+                    animator.Play("Player_Molotov_Jump");
+                }
+            }
         }
         transform.position = currentPosition;
     }
 
     private void Update()
     {
-        if (fightRegime == FightRegime.Gun && Input.GetKeyDown(KeyCode.F))
-        {
-            fightRegime = FightRegime.Pzrk;           
-        }
-        else if (fightRegime == FightRegime.Pzrk && Input.GetKeyDown(KeyCode.F))
-        {
-            fightRegime = FightRegime.Gun;
-        }
 
-        if (Input.GetKey(KeyCode.A))
-        {
-            scroll.scrollSpeed = -0.5f;
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            scroll.scrollSpeed = 0.5f;
-        }
-        else
-        {
-            scroll.scrollSpeed = 0;
-        }
+        RegimeChange();
 
-        
-        var isGrounded = IsGrounded();       
+        BackgroundScroll();
+    
+        isGrounded = IsGrounded();
+
+        // SOUNDS
 
         if (Input.GetKeyDown(KeyCode.W) && isGrounded)
         {
             rb2d.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+            PlaySound(sounds[0]);
         }
 
         if (yPositionLastFrame > transform.position.y)
@@ -202,85 +275,193 @@ public class PlayerMovement : MonoBehaviour
         }
 
         if (fightRegime == FightRegime.Gun)
-        {
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+        {            
+            if (Input.GetKeyDown(KeyCode.Mouse0) && !isCrawled)
             {
-                GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity, null);
-                shootAKSoundEffect.Play();
-
-                if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0))
-                {
-                    //Shoot_Left
-                    newBullet.transform.position += -transform.right;
-                    newBullet.GetComponent<Rigidbody2D>().AddForce(-transform.right * bulletSpeed, ForceMode2D.Impulse);
-                }
-                else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.Mouse0))
-                {
-                    //Shoot_Right
-                    newBullet.transform.position += transform.right;
-                    newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);
-                }
-
-                Destroy(newBullet, bulletTime);
+                StandShoot();
             }
 
-            if (Input.GetKeyDown(KeyCode.C))
+            if (Input.GetKeyDown(KeyCode.Mouse0) && isCrawled)
             {
-                GameObject newMolo = Instantiate(molotovPrefab, transform.position, Quaternion.identity, null);
-                throwMolotovSoundEffect.Play();
+                CrawledShoot();               
+            }           
+        }
+        else if (fightRegime == FightRegime.Pzrk)
+        {           
+            if (Input.GetKeyDown(KeyCode.Mouse0) && isLoaded && !isCrawled && isGrounded)
+            {
+                PlaySound(sounds[6]);
 
-                if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.C))
+                PZRKShoot();
+            }
+        }
+        else if (fightRegime == FightRegime.Molotov)
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0)) 
+            {
+                PlaySound(sounds[5]);
+                //animator.Play("Player_Molotov_throw");
+                GameObject newMolo = Instantiate(molotovPrefab, transform.position, Quaternion.identity, null);
+
+                if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     //Shoot_Left
                     newMolo.transform.position += -transform.right;
                     newMolo.GetComponent<Rigidbody2D>().AddForce(-transform.right * molotovSpeed, ForceMode2D.Impulse);
                 }
-                else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.C))
+                else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     //Shoot_Right
                     newMolo.transform.position += transform.right;
                     newMolo.GetComponent<Rigidbody2D>().AddForce(transform.right * molotovSpeed, ForceMode2D.Impulse);
                 }
-
+                fightRegime = FightRegime.Gun;
                 Destroy(newMolo, molotovTime);
-            }
-        }
-        else if (fightRegime == FightRegime.Pzrk)
-        {           
-            if (Input.GetKeyDown(KeyCode.Mouse0) && isLoaded)
-            {
-                shootPZRKSoundEffect.Play();
-                Vector3 spawnPosition = transform.position;
-                
-                if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0)) //shoot left
-                {                    
-                    spawnPosition.x -= 0.01f; 
-                    spawnPosition.y += 0.9f;
-                    GameObject newBullet = Instantiate(PzrkRocketPrefub, spawnPosition, Quaternion.identity, null);
-                    newBullet.transform.position += -transform.right;
-                    newBullet.GetComponent<SpriteRenderer>().flipX = true;
-                    newBullet.transform.rotation = Quaternion.Euler(0, 0, -26);
-                    newBullet.GetComponent<Rigidbody2D>().AddForce(rocketLeft * bulletSpeed, ForceMode2D.Impulse);
-                    Destroy(newBullet, bulletTime);
-                }
-                else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.Mouse0)) //shoot right
-                {
-                    spawnPosition.x += 0.01f;
-                    spawnPosition.y += 0.9f;
-                    GameObject newBullet = Instantiate(PzrkRocketPrefub, spawnPosition, Quaternion.identity, null);
-                    newBullet.transform.position += transform.right;
-                    newBullet.GetComponent<SpriteRenderer>().flipX = false;
-                    newBullet.transform.rotation = Quaternion.Euler(0, 0, 26);
-                    newBullet.GetComponent<Rigidbody2D>().AddForce(rocketRight * bulletSpeed, ForceMode2D.Impulse);
-                    Destroy(newBullet, bulletTime);
-                }
-
-                load = 0f;
             }
         }
     }
 
     private void LateUpdate()
+    {
+        UpdateHealthStatus();
+    }
+
+    private bool IsGrounded()
+    {
+        var groundCheck = Physics2D.Raycast(transform.position, Vector2.down, 1.3f, platformLayerMask);
+        Debug.DrawRay(transform.position, Vector2.down * 1.3f, Color.green);
+        return groundCheck.collider != null && groundCheck.collider.CompareTag("Ground");
+    } 
+    
+    private void RegimeChange()
+    {
+        if (fightRegime == FightRegime.Gun && Input.GetKeyDown(KeyCode.F))
+        {
+            fightRegime = FightRegime.Pzrk;
+        }
+        else if (fightRegime == FightRegime.Pzrk && Input.GetKeyDown(KeyCode.F))
+        {
+            fightRegime = FightRegime.Gun;
+        }
+        else if (fightRegime == FightRegime.Molotov && Input.GetKeyDown(KeyCode.F))
+        {
+            fightRegime = FightRegime.Pzrk;
+        }
+        else if (fightRegime == FightRegime.Molotov && Input.GetKeyDown(KeyCode.C))
+        {
+            fightRegime = FightRegime.Gun;
+        }
+        else if (fightRegime == FightRegime.Molotov && Input.GetKeyDown(KeyCode.F))
+        {
+            fightRegime = FightRegime.Pzrk;
+        }
+        else if (fightRegime == FightRegime.Molotov && Input.GetKeyDown(KeyCode.C))
+        {
+            fightRegime = FightRegime.Gun;
+        }
+        else if (fightRegime == FightRegime.Gun && Input.GetKeyDown(KeyCode.C))
+        {
+            fightRegime = FightRegime.Molotov;
+        }
+        else if (fightRegime == FightRegime.Pzrk && Input.GetKeyDown(KeyCode.C))
+        {
+            fightRegime = FightRegime.Molotov;
+        }
+    }
+
+    private void BackgroundScroll()
+    {
+        if (Input.GetKey(KeyCode.A))
+        {
+            scroll.scrollSpeed = -0.5f;
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            scroll.scrollSpeed = 0.5f;
+        }
+        else
+        {
+            scroll.scrollSpeed = 0;
+        }
+    }
+
+    private void StandShoot()
+    {
+        PlaySound(sounds[4]);
+        GameObject newBullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity, null);
+
+        if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            //Shoot_Left
+            newBullet.transform.position += -transform.right;
+            newBullet.GetComponent<Rigidbody2D>().AddForce(-transform.right * bulletSpeed, ForceMode2D.Impulse);
+        }
+        else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            //Shoot_Right
+            newBullet.transform.position += transform.right;
+            newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);
+        }
+
+        Destroy(newBullet, bulletTime);
+    }
+
+    private void CrawledShoot()
+    {
+        PlaySound(sounds[4]);
+        Vector3 spawnPosition = transform.position;
+
+        spawnPosition.y = -1.45f; //якщо куля створюється сильно далеко від player можна зробити тут меньше значення
+
+        GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);
+
+        if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            //Shoot_Left
+            newBullet.transform.position += -transform.right;
+            newBullet.GetComponent<Rigidbody2D>().AddForce(-transform.right * bulletSpeed, ForceMode2D.Impulse);
+        }
+        else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            //Shoot_Right
+            newBullet.transform.position += transform.right;
+            newBullet.GetComponent<Rigidbody2D>().AddForce(transform.right * bulletSpeed, ForceMode2D.Impulse);
+        }
+
+        Destroy(newBullet, bulletTime);
+    }
+
+    private void PZRKShoot()
+    {
+        Vector3 spawnPosition = transform.position;
+
+        if (spriteRenderer.flipX == true && Input.GetKeyDown(KeyCode.Mouse0)) //shoot left
+        {
+            spawnPosition.x -= 0.01f;
+            spawnPosition.y += 0.9f;
+            GameObject newBullet = Instantiate(PzrkRocketPrefub, spawnPosition, Quaternion.identity, null);
+            newBullet.transform.position += -transform.right;
+            newBullet.GetComponent<SpriteRenderer>().flipX = true;
+            newBullet.transform.rotation = Quaternion.Euler(0, 0, -26);
+            newBullet.GetComponent<Rigidbody2D>().AddForce(rocketLeft * bulletSpeed, ForceMode2D.Impulse);
+            Destroy(newBullet, bulletTime);
+        }
+        else if (spriteRenderer.flipX == false && Input.GetKeyDown(KeyCode.Mouse0)) //shoot right
+        {
+            spawnPosition.x += 0.01f;
+            spawnPosition.y += 0.9f;
+            GameObject newBullet = Instantiate(PzrkRocketPrefub, spawnPosition, Quaternion.identity, null);
+            newBullet.transform.position += transform.right;
+            newBullet.GetComponent<SpriteRenderer>().flipX = false;
+            newBullet.transform.rotation = Quaternion.Euler(0, 0, 26);
+            newBullet.GetComponent<Rigidbody2D>().AddForce(rocketRight * bulletSpeed, ForceMode2D.Impulse);
+            Destroy(newBullet, bulletTime);
+        }
+
+        load = 0f;
+    }
+
+    private void UpdateHealthStatus()
     {
         yPositionLastFrame = transform.position.y;
 
@@ -308,19 +489,4 @@ public class PlayerMovement : MonoBehaviour
             loadImage.enabled = false;
         }
     }
-    private bool IsGrounded()
-    {
-        var groundCheck = Physics2D.Raycast(transform.position, Vector2.down, 1.3f, platformLayerMask);       
-        return groundCheck.collider != null && groundCheck.collider.CompareTag("Ground");
-    }
-
-    public void PlaySound1()
-    {
-        jumpSoundEffect.PlayOneShot(audioClips[0]);             
-    }
-
-    public void PlaySound2()
-    {
-        jumpSoundEffect.PlayOneShot(audioClips[1]);
-    }   
 }

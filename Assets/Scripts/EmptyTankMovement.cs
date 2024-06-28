@@ -1,9 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EmptyTankMovement : MonoBehaviour
-{      
+public class EmptyTankMovement : Sounds
+{
+    [SerializeField] private GameObject particleSysObj;
+    [SerializeField] private ParticleSystem shootEffect;
+    private ParticleSystem.ShapeModule shape;
+    public Transform playerTransform;  // Посилання на головний герой
+    public float maxDistance = 10f;    
+
     public Vector2[] points;
     public int currentPoint;
     
@@ -30,18 +34,21 @@ public class EmptyTankMovement : MonoBehaviour
 
     private Rigidbody2D rb2d;
 
-
+    [SerializeField] private float engineVolume;
 
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         rb2d = GetComponent<Rigidbody2D>();
-
+        shape = shootEffect.shape;
     }
 
     private void Update()
     {
+        RegulateTankEngineSound();
+        RegulateTankShootSound();
+
         Vector2 position = transform.position;
 
         
@@ -60,27 +67,30 @@ public class EmptyTankMovement : MonoBehaviour
         }
         
         transform.position = Vector2.MoveTowards(transform.position, points[currentPoint], speed * Time.deltaTime);
-
     }
 
     private void FixedUpdate()
     {
-        Vector3 tankScale = transform.localScale;
-
-        if (currentPoint == 0)
-        {           
-            animator.Play("Tank_Right");
-            tankScale.x = -0.5f;
-        }
-        else if (currentPoint == 1)
-        {           
-            animator.Play("Tank");
-            tankScale.x = 0.5f;
-        }
-        transform.localScale = tankScale;
+        
         
         if (isAlive)
         {
+            Vector3 tankScale = transform.localScale;
+
+            if (currentPoint == 0)
+            {
+                animator.Play("Tank_Right");
+                tankScale.x = -0.5f;
+                particleSysObj.transform.position = new Vector3(transform.position.x - 3.5f, -1.1f, -0.3f);
+            }
+            else if (currentPoint == 1)
+            {
+                animator.Play("Tank");
+                tankScale.x = 0.5f;
+                particleSysObj.transform.position = new Vector3(transform.position.x + 3.5f, -1.1f, -0.3f);
+            }
+            transform.localScale = tankScale;
+
             timer--;
 
             if (timer <= 0)
@@ -92,6 +102,13 @@ public class EmptyTankMovement : MonoBehaviour
                     spawnPosition.x += 4.5f; //якщо куля створюється сильно далеко від танка можна зробити тут меньше значення
                     spawnPosition.y += 0.5f;
 
+                    //PlaySound(sounds[0]);
+                    audioSource2.Play();
+                    Debug.Log("shot");
+                    shootEffect.transform.position = new Vector3(transform.position.x + 5f, 0.02f, -0.3f);
+                    //shootEffect.transform.rotation = new Quaternion(-270f, 180f, -0.10f, 0);
+                    shape.rotation = new Vector3(0f, 0f, 0f);
+                    shootEffect.Play();
                     GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);                    
                     newBullet.transform.position += transform.right;
                     newBullet.GetComponent<SpriteRenderer>().flipX = true;
@@ -104,6 +121,13 @@ public class EmptyTankMovement : MonoBehaviour
                     spawnPosition.x -= 4.5f; //якщо куля створюється сильно далеко від танка можна зробити тут меньше значення
                     spawnPosition.y += 0.5f;
 
+                    //PlaySound(sounds[0]);
+                    audioSource2.Play();
+                    shootEffect.transform.position = new Vector3(transform.position.x - 5f, 0.02f, -0.3f);
+                    //shootEffect.transform.rotation = new Quaternion(-90f, 180f, -0.10f, 0);
+                    shape.rotation = new Vector3(0f, 180f, 0f);
+                    shootEffect.Play();
+                    Debug.Log("shot2");
                     GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);
                     newBullet.transform.position += -transform.right;
                     newBullet.GetComponent<SpriteRenderer>().flipX = false;
@@ -116,11 +140,14 @@ public class EmptyTankMovement : MonoBehaviour
         {
             speed = 0;
             transform.gameObject.tag = "Ground";
+            animator.Play("Tank_Idle");
+            particleSysObj.SetActive(false);
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // PlaySound(burning);
         if (collision.gameObject.tag == "Player" && isAlive)
         {
             collision.gameObject.GetComponent<PlayerMovement>().health -= damage;
@@ -130,6 +157,34 @@ public class EmptyTankMovement : MonoBehaviour
         {
             isAlive = false;
             rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
+        }
+    }
+
+    private void RegulateTankEngineSound()
+    {
+        if (audioSource != null && playerTransform != null)
+        {
+            float distance = Vector2.Distance(playerTransform.position, transform.position);
+
+            // Розрахунок гучності в залежності від відстані
+            float volume = Mathf.Clamp01(0.4f - distance / maxDistance) * engineVolume;
+
+            // Встановлення нового значення гучності
+            audioSource.volume = volume;
+        }
+    }
+
+    private void RegulateTankShootSound()
+    {
+        if (audioSource != null && playerTransform != null)
+        {
+            float distance = Vector2.Distance(playerTransform.position, transform.position);
+
+            // Розрахунок гучності в залежності від відстані
+            float volume = Mathf.Clamp01(0.6f - distance / maxDistance);
+
+            // Встановлення нового значення гучності
+            audioSource2.volume = volume;
         }
     }
 }
