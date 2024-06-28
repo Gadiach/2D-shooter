@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2041302a4e8e8f6468796836e44153ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firePrefab: {fileID: 1253142483436318, guid: 89956e675b749204c8e10395ce2b5fb9, type: 3}
+  firePrefab: {fileID: 3498050392308947757, guid: 17483b70c4df88141915fb98d82c1e55, type: 3}
   damage: 50
   impulse: 0
   timerMax: 80
