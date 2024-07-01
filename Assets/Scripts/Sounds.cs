@@ -6,6 +6,7 @@ public class Sounds : MonoBehaviour
 
     public AudioSource audioSource1;
     public AudioSource audioSource2;
+    public AudioSource audioSource3;
 
     public AudioSource audioSource => GetComponent<AudioSource>();
 

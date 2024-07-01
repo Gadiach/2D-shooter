@@ -1,17 +1,23 @@
+using System.Collections;
 using UnityEngine;
 
 public class EmptyTankMovement : Sounds
 {
     [SerializeField] private GameObject particleSysObj;
     [SerializeField] private ParticleSystem shootEffect;
-    private ParticleSystem.ShapeModule shape;
-    public Transform playerTransform;  // Посилання на головний герой
+    [SerializeField] private ParticleSystem explosionEffect;
+    [SerializeField] private ParticleSystem pipeBurnEffect;
+    [SerializeField] private ParticleSystem tankBurnEffect;
+    [SerializeField] private GameObject colliderDestroyedTank;
+    [SerializeField] private Collider2D tankCollider;
+    private ParticleSystem.ShapeModule shootEffectShape;
+    private ParticleSystem.ShapeModule pipeBurnEffectShape;
+    public Transform playerTransform;  
     public float maxDistance = 10f;    
 
     public Vector2[] points;
     public int currentPoint;
     
-
     public float speed;
 
     public float health = 100f;
@@ -41,7 +47,8 @@ public class EmptyTankMovement : Sounds
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         rb2d = GetComponent<Rigidbody2D>();
-        shape = shootEffect.shape;
+        shootEffectShape = shootEffect.shape;
+        pipeBurnEffectShape = pipeBurnEffect.shape;
     }
 
     private void Update()
@@ -56,13 +63,11 @@ public class EmptyTankMovement : Sounds
         {
             if (currentPoint == 0)
             {
-                currentPoint = 1;
-                
+                currentPoint = 1;               
             }
             else if (currentPoint == 1)
             {
-                currentPoint = 0;
-                
+                currentPoint = 0;                
             }
         }
         
@@ -107,7 +112,7 @@ public class EmptyTankMovement : Sounds
                     Debug.Log("shot");
                     shootEffect.transform.position = new Vector3(transform.position.x + 5f, 0.02f, -0.3f);
                     //shootEffect.transform.rotation = new Quaternion(-270f, 180f, -0.10f, 0);
-                    shape.rotation = new Vector3(0f, 0f, 0f);
+                    shootEffectShape.rotation = new Vector3(0f, 0f, 0f);
                     shootEffect.Play();
                     GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);                    
                     newBullet.transform.position += transform.right;
@@ -125,7 +130,7 @@ public class EmptyTankMovement : Sounds
                     audioSource2.Play();
                     shootEffect.transform.position = new Vector3(transform.position.x - 5f, 0.02f, -0.3f);
                     //shootEffect.transform.rotation = new Quaternion(-90f, 180f, -0.10f, 0);
-                    shape.rotation = new Vector3(0f, 180f, 0f);
+                    shootEffectShape.rotation = new Vector3(0f, 180f, 0f);
                     shootEffect.Play();
                     Debug.Log("shot2");
                     GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);
@@ -138,9 +143,11 @@ public class EmptyTankMovement : Sounds
         }
         else if (!isAlive)
         {
+            tankCollider.enabled = false;
+            colliderDestroyedTank.SetActive(true);
             speed = 0;
             transform.gameObject.tag = "Ground";
-            animator.Play("Tank_Idle");
+            animator.Play("Tank_Destroyed");
             particleSysObj.SetActive(false);
         }
     }
@@ -155,8 +162,16 @@ public class EmptyTankMovement : Sounds
         }
         else if (collision.gameObject.tag == "Molotov")
         {
-            isAlive = false;
-            rb2d.constraints = RigidbodyConstraints2D.FreezeAll;
+            if(currentPoint == 0)
+            {
+                SetPipeBurnEffectPosAndShapeRight();
+                StartCoroutine(BurningAndExplosionSequenceRight());
+            }
+            else
+            {
+                SetPipeBurnEffectPosAndShapeLeft();
+                StartCoroutine(BurningAndExplosionSequenceLeft());
+            }                   
         }
     }
 
@@ -186,5 +201,78 @@ public class EmptyTankMovement : Sounds
             // Встановлення нового значення гучності
             audioSource2.volume = volume;
         }
+    }
+
+    private IEnumerator BurningAndExplosionSequenceRight()
+    {
+        yield return new WaitForSeconds(2f);
+        // Play TankBurnEffect
+        tankBurnEffect.Play();
+
+        // Wait for another 2 seconds before starting the PipeBurnEffect
+        yield return new WaitForSeconds(2f);
+        // Play PipeBurnEffect
+        pipeBurnEffect.Play();
+
+        // TankBurnEffect lasts for 4 seconds
+        yield return new WaitForSeconds(2f); // This is the remaining time of the 4 seconds burn duration
+
+        // Play ExplosionEffect
+        explosionEffect.Play();
+        audioSource3.Play();
+
+        // Set isAlive to false and stop tank movement
+        isAlive = false;
+        // Uncomment the next line if you want to stop the tank's movement
+        // rb.velocity = Vector2.zero; // Stop the tank from moving
+    }
+
+    private IEnumerator BurningAndExplosionSequenceLeft()
+    {
+        //tank burns 4 sec. Starts burning here
+        // in 2 sec pipe burns 1 sec 
+        // 1 more sec burning in the middle 
+        // explosion effect 
+
+
+        yield return new WaitForSeconds(2f);
+        // Play TankBurnEffect
+        tankBurnEffect.Play();
+
+        // Wait for another 2 seconds before starting the PipeBurnEffect
+        yield return new WaitForSeconds(2f);
+        // Play PipeBurnEffect
+        pipeBurnEffect.Play();
+
+        // TankBurnEffect lasts for 4 seconds
+        yield return new WaitForSeconds(2f); // This is the remaining time of the 4 seconds burn duration
+
+        // Play ExplosionEffect
+        explosionEffect.Play();
+        audioSource3.Play();
+
+        // Set isAlive to false and stop tank movement
+        isAlive = false;
+        // Uncomment the next line if you want to stop the tank's movement
+        // rb.velocity = Vector2.zero; // Stop the tank from moving
+    }
+
+    private void SetPipeBurnEffectPosAndShapeRight()
+    {        
+        pipeBurnEffect.transform.position = new Vector3(transform.position.x + 5f, 0.02f, -0.3f);
+        pipeBurnEffectShape.rotation = new Vector3(0f, 0f, 0f);
+    }
+
+    private void SetPipeBurnEffectPosAndShapeLeft()
+    {
+        pipeBurnEffect.transform.position = new Vector3(transform.position.x - 5f, 0.02f, -0.3f);
+        pipeBurnEffectShape.rotation = new Vector3(0f,180f, 0f);
+    }
+
+    private void TankBurn()
+    {
+        tankBurnEffect.Play(); // burns 4 seconds
+        // in 2 sec start pipe burning
+        pipeBurnEffect.Play();//burns 1 sec
     }
 }
