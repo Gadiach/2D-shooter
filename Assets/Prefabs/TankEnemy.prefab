@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1243233865}
   - component: {fileID: 1243233866}
+  - component: {fileID: 795154596}
   m_Layer: 6
   m_Name: TankPipe
   m_TagString: Ground
@@ -45,7 +46,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -4.2573547, y: 1.0551468}
+  m_Offset: {x: -6.2646713, y: 1.0484172}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -56,8 +57,29 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 9.514709, y: 0.48876518}
+  m_Size: {x: 5.5000763, y: 0.4826038}
   m_EdgeRadius: 0
+--- !u!50 &795154596
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1243233864}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
 --- !u!1 &4952307944461018162
 GameObject:
   m_ObjectHideFlags: 0
@@ -81,7 +103,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4952307944461018120
 Transform:
   m_ObjectHideFlags: 0
@@ -142,8 +164,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 819018677
+  m_SortingLayer: -1
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -377,6 +399,9 @@ MonoBehaviour:
   explosionEffect: {fileID: 1978910836461645829}
   pipeBurnEffect: {fileID: 5795446359980385238}
   tankBurnEffect: {fileID: 7592660928274274472}
+  colliderDestroyedTank: {fileID: 5860863928915111812}
+  tankCollider: {fileID: 4952307944461018117}
+  tankPipeObj: {fileID: 1243233864}
   playerTransform: {fileID: 0}
   maxDistance: 100
   points:
@@ -390,6 +415,7 @@ MonoBehaviour:
   timerMax: 350
   damage: 50
   impulse: 3
+  isBurning: 0
   engineVolume: 0.1
 --- !u!95 &4952307944461018122
 Animator:
@@ -711,11 +737,11 @@ GameObject:
   - component: {fileID: 9020777244214440881}
   m_Layer: 7
   m_Name: ColliderObj
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1696012731898844607
 Transform:
   m_ObjectHideFlags: 0
@@ -956,12 +982,32 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1196067872384355280, guid: c15f22170edbbcf4cb989ece5df1ffb4, type: 3}
+      propertyPath: simulationSpeed
+      value: 0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 1196067872384355280, guid: c15f22170edbbcf4cb989ece5df1ffb4, type: 3}
       propertyPath: InitialModule.startSize.scalar
-      value: 8
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1196067872384355280, guid: c15f22170edbbcf4cb989ece5df1ffb4, type: 3}
+      propertyPath: InitialModule.startSizeY.scalar
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1196067872384355280, guid: c15f22170edbbcf4cb989ece5df1ffb4, type: 3}
+      propertyPath: InitialModule.startSizeZ.scalar
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1196067872384355280, guid: c15f22170edbbcf4cb989ece5df1ffb4, type: 3}
       propertyPath: InitialModule.startSize.minScalar
-      value: 7
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1196067872384355280, guid: c15f22170edbbcf4cb989ece5df1ffb4, type: 3}
+      propertyPath: InitialModule.startSizeY.minScalar
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1196067872384355280, guid: c15f22170edbbcf4cb989ece5df1ffb4, type: 3}
+      propertyPath: InitialModule.startSizeZ.minScalar
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 5921271185720338240, guid: c15f22170edbbcf4cb989ece5df1ffb4, type: 3}
       propertyPath: m_Name

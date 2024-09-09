@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PS_destroy : MonoBehaviour
+public class PS_destroyAfterTime : MonoBehaviour
 {
     private float lifetime = 7f;
 

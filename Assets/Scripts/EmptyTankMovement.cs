@@ -10,6 +10,7 @@ public class EmptyTankMovement : Sounds
     [SerializeField] private ParticleSystem tankBurnEffect;
     [SerializeField] private GameObject colliderDestroyedTank;
     [SerializeField] private Collider2D tankCollider;
+    [SerializeField] private GameObject tankPipeObj;
     private ParticleSystem.ShapeModule shootEffectShape;
     private ParticleSystem.ShapeModule pipeBurnEffectShape;
     public Transform playerTransform;  
@@ -37,6 +38,7 @@ public class EmptyTankMovement : Sounds
     private Animator animator;
 
     private bool isAlive = true;
+    public bool isBurning = false;
 
     private Rigidbody2D rb2d;
 
@@ -155,13 +157,15 @@ public class EmptyTankMovement : Sounds
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // PlaySound(burning);
-        if (collision.gameObject.tag == "Player" && isAlive)
+        if (collision.gameObject.tag == "Player" && isAlive )
         {
             collision.gameObject.GetComponent<PlayerMovement>().health -= damage;
-            collision.gameObject.GetComponent<Rigidbody2D>().AddForce(collision.gameObject.transform.up * impulse, ForceMode2D.Impulse);            
+            collision.gameObject.GetComponent<Rigidbody2D>().AddForce(collision.gameObject.transform.up * impulse, ForceMode2D.Impulse);
         }
-        else if (collision.gameObject.tag == "Molotov")
+        else if (collision.gameObject.tag == "Molotov" && isAlive && !isBurning)
         {
+            isBurning = true;
+            Debug.Log("start burning");
             if(currentPoint == 0)
             {
                 SetPipeBurnEffectPosAndShapeRight();
@@ -171,7 +175,8 @@ public class EmptyTankMovement : Sounds
             {
                 SetPipeBurnEffectPosAndShapeLeft();
                 StartCoroutine(BurningAndExplosionSequenceLeft());
-            }                   
+            }
+            tankPipeObj.SetActive(false);
         }
     }
 
@@ -205,7 +210,7 @@ public class EmptyTankMovement : Sounds
 
     private IEnumerator BurningAndExplosionSequenceRight()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         // Play TankBurnEffect
         tankBurnEffect.Play();
 
@@ -235,7 +240,7 @@ public class EmptyTankMovement : Sounds
         // explosion effect 
 
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(1f);
         // Play TankBurnEffect
         tankBurnEffect.Play();
 
@@ -267,12 +272,5 @@ public class EmptyTankMovement : Sounds
     {
         pipeBurnEffect.transform.position = new Vector3(transform.position.x - 5f, 0.02f, -0.3f);
         pipeBurnEffectShape.rotation = new Vector3(0f,180f, 0f);
-    }
-
-    private void TankBurn()
-    {
-        tankBurnEffect.Play(); // burns 4 seconds
-        // in 2 sec start pipe burning
-        pipeBurnEffect.Play();//burns 1 sec
     }
 }

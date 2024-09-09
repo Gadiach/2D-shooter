@@ -151,7 +151,7 @@ public class Helikopter : Sounds
         for (shootAmount = 5f; shootAmount > 0f; shootAmount--)
         {
             Vector3 spawnPosition = transform.position;
-            spawnPosition.x += 3.5f; //якщо куля створюється сильно далеко від танка можна зробити тут меньше значення
+            spawnPosition.x += 3.5f; 
             spawnPosition.y -= 1.2f;
 
             GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);
