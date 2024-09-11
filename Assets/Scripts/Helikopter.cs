@@ -38,14 +38,17 @@ public class Helikopter : Sounds
     private bool isCrushed = false;
 
     private PolygonCollider2D polygonCollider2D;
-    
+
+    [SerializeField] private ParticleSystem shootEffect;
+    private ParticleSystem.ShapeModule shootEffectShape;
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         rb2d = GetComponent<Rigidbody2D>() ;
         polygonCollider2D = GetComponent<PolygonCollider2D>();
-
+        shootEffectShape = shootEffect.shape;
     }
 
     private void Update()
@@ -62,7 +65,6 @@ public class Helikopter : Sounds
                 float maxVolume = 0.5f; // New maximum volume level
                 float volume = Mathf.Clamp01(1f - distance / maxDistance) * maxVolume;
 
-                // Встановлення нового значення гучності
                 audioSource.volume = volume;
             }
 
@@ -71,12 +73,12 @@ public class Helikopter : Sounds
                 if (currentPoint == 0)
                 {
                     currentPoint = 1;
-
+                    shootEffectShape.rotation = new Vector3(0f, 0f, 0f);                   
                 }
                 else if (currentPoint == 1)
                 {
                     currentPoint = 0;
-
+                    shootEffectShape.rotation = new Vector3(0f, 0f, 177f);
                 }
             }
             transform.position = Vector2.MoveTowards(transform.position, points[currentPoint], speed * Time.deltaTime);
@@ -150,9 +152,10 @@ public class Helikopter : Sounds
     {
         for (shootAmount = 5f; shootAmount > 0f; shootAmount--)
         {
+            shootEffect.Play();
             Vector3 spawnPosition = transform.position;
-            spawnPosition.x += 3.5f; 
-            spawnPosition.y -= 1.2f;
+            spawnPosition.x += 3.8f; 
+            spawnPosition.y -= 1.4f;
 
             GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);
             newBullet.transform.position += transform.right;
@@ -167,9 +170,10 @@ public class Helikopter : Sounds
     {
         for (shootAmount = 5f; shootAmount > 0f; shootAmount--)
         {
+            shootEffect.Play();
             Vector3 spawnPosition = transform.position;
-            spawnPosition.x -= 3.5f; //якщо куля створюється сильно далеко від танка можна зробити тут меньше значення
-            spawnPosition.y -= 1.2f;
+            spawnPosition.x -= 3.8f; //якщо куля створюється сильно далеко від танка можна зробити тут меньше значення
+            spawnPosition.y -= 1.4f;
 
             GameObject newBullet = Instantiate(bulletPrefab, spawnPosition, Quaternion.identity, null);
             newBullet.transform.position += -transform.right;
