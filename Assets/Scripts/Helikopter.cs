@@ -11,6 +11,7 @@ public class Helikopter : Sounds
 
 
     public float speed;
+    public float fallingSpeed;
 
     public float health = 100f;
 
@@ -37,17 +38,18 @@ public class Helikopter : Sounds
     public float crushSpeed;
     private bool isCrushed = false;
 
-    private PolygonCollider2D polygonCollider2D;
+    [SerializeField] private PolygonCollider2D collider2D;
 
     [SerializeField] private ParticleSystem shootEffect;
+    [SerializeField] private ParticleSystem smokeEffect;
+    [SerializeField] private GameObject explosionEffect;
     private ParticleSystem.ShapeModule shootEffectShape;
 
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-        rb2d = GetComponent<Rigidbody2D>() ;
-        polygonCollider2D = GetComponent<PolygonCollider2D>();
+        rb2d = GetComponent<Rigidbody2D>() ;        
         shootEffectShape = shootEffect.shape;
     }
 
@@ -85,6 +87,7 @@ public class Helikopter : Sounds
         }
         else if (!isAlive)
         {
+            
             rb2d.AddForce(-transform.up * crushSpeed, ForceMode2D.Force);
             if (isCrushed)
             {
@@ -117,9 +120,10 @@ public class Helikopter : Sounds
         }
         else if (isCrushed)
         {
+            smokeEffect.Stop();
             if (currentPoint == 0)
             {
-                animator.Play("Helicopter_Destroyed_Right");
+                animator.Play("Helicopter_Destroyed");
             }
             else if (currentPoint == 1)
             {
@@ -146,7 +150,12 @@ public class Helikopter : Sounds
                     StartCoroutine("PeriodicalShootLeft");
                 }
             }
-        }                
+        }
+        else
+        {
+            rb2d.mass = 1.0f;
+        }
+        
     }
     IEnumerator PeriodicalShootRight()
     {
@@ -189,11 +198,15 @@ public class Helikopter : Sounds
         if (collision.gameObject.tag == "Pzrk")
         {
             isAlive = false;
+            smokeEffect.Play();
             Destroy(collision.gameObject);          
         }
         if (collision.gameObject.tag == "Ground")
         {
-            isCrushed = true;            
+            collider2D.isTrigger = true;
+            explosionEffect.SetActive(true);
+            smokeEffect.Stop();
+            isCrushed = true;             
         }
     }    
 }
