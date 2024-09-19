@@ -221,7 +221,7 @@ AnimatorStateMachine:
     m_Position: {x: 250, y: 1100, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -2469723126411958438}
-    m_Position: {x: 285, y: 1165, z: 0}
+    m_Position: {x: 250, y: 1160, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -291,7 +291,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: OperatorFVP
+  m_Name: OperatorFPV
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []

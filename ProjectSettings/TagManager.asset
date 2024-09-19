@@ -18,6 +18,7 @@ TagManager:
   - MainMusicSlider
   - MainMusicToggle
   - SoundObject
+  - FPV
   layers:
   - Default
   - TransparentFX

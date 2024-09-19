@@ -5,11 +5,11 @@ using UnityEngine.SceneManagement;
 public class PlayerMovement : Sounds
 {
     [SerializeField] private LayerMask platformLayerMask;
-    public float speed;
-    public float jumpForce;
-    public bool isGrounded;
-    public bool isCrawled;
-    public float impulseSpeed;
+    [SerializeField] private float speed;
+    [SerializeField] private float jumpForce;
+    [SerializeField] private bool isGrounded;
+    [SerializeField] private bool isCrawled;
+    [SerializeField] private float impulseSpeed;
 
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb2d;
@@ -17,43 +17,46 @@ public class PlayerMovement : Sounds
     private Animator animator;
 
     private float yPositionLastFrame;
-    public float bonusGravity;
+    [SerializeField] private float bonusGravity;
 
-    public BackgroundScroller scroll;
+    [SerializeField] private BackgroundScroller scroll;
 
-    public float bulletTime;
-  
-    public float healthMax;
+    [SerializeField] private float bulletTime;
+
+    [SerializeField] private float healthMax;
     public float health;
-    public Image healthImage;
+    [SerializeField] private Image healthImage;
 
-    public GameObject bulletPrefab;
-    public float bulletSpeed;
+    [SerializeField] private GameObject bulletPrefab;
+    [SerializeField] private float bulletSpeed;
 
-    public GameObject molotovPrefab;
-    public float molotovSpeed;
-    public float molotovTime;
+    [SerializeField] private GameObject molotovPrefab;
+    [SerializeField] private float molotovSpeed;
+    [SerializeField] private float molotovTime;
+
+    public bool IsPlayerInFPVTrigger = false;
 
 
-    public GameObject PzrkRocketPrefub;
-     public enum FightRegime
+    [SerializeField] private GameObject PzrkRocketPrefub;
+    public enum FightRegime
     {
         Gun,
         Pzrk,
-        Molotov
+        Molotov,
+        FPV
     }
 
     public FightRegime fightRegime;
-   
-    public float rocketSpeed = 10f;
+
+    [SerializeField] private float rocketSpeed = 10f;
 
     private Vector3 rocketRight = new Vector3(2, 1, 0);
     private Vector3 rocketLeft = new Vector3(-2, 1, 0);
 
-    public bool isLoaded = true;
-    public float loadMax;
-    public float load = 3000f;
-    public Image loadImage;  
+    [SerializeField] private bool isLoaded = true;
+    [SerializeField] private float loadMax;
+    [SerializeField] private float load = 3000f;
+    [SerializeField] private Image loadImage;  
   
     private void Start()
     {
@@ -244,7 +247,12 @@ public class PlayerMovement : Sounds
                 }
             }
         }
-        transform.position = currentPosition;
+        else if (fightRegime == FightRegime.FPV)
+        {
+            animator.Play("OperatorFPV");
+
+        }
+            transform.position = currentPosition;
     }
 
     private void Update()
@@ -366,6 +374,14 @@ public class PlayerMovement : Sounds
         else if (fightRegime == FightRegime.Pzrk && Input.GetKeyDown(KeyCode.C))
         {
             fightRegime = FightRegime.Molotov;
+        }
+        else if(fightRegime != FightRegime.FPV && IsPlayerInFPVTrigger && Input.GetKeyDown(KeyCode.E))
+        {
+            fightRegime = FightRegime.FPV;
+        }
+        else if (fightRegime == FightRegime.FPV && IsPlayerInFPVTrigger && Input.GetKeyDown(KeyCode.E))
+        {
+            fightRegime = FightRegime.Gun;
         }
     }
 
@@ -489,4 +505,5 @@ public class PlayerMovement : Sounds
             loadImage.enabled = false;
         }
     }
+
 }

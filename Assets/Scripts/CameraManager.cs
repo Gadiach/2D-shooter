@@ -12,8 +12,8 @@ public class CameraManager : MonoBehaviour
         GameEvents.OnSwitchToPlayer += SwitchToSideCamera;
 
         // Изначально активируем боковую камеру
-        topCamera.gameObject.SetActive(false);
-        sideCamera.gameObject.SetActive(true);
+        topCamera.gameObject.SetActive(true);
+        sideCamera.gameObject.SetActive(false);
     }
 
     private void OnDestroy()
@@ -25,13 +25,13 @@ public class CameraManager : MonoBehaviour
 
     private void SwitchToTopCamera()
     {
-        topCamera.gameObject.SetActive(true);
-        sideCamera.gameObject.SetActive(false);
+        topCamera.gameObject.SetActive(false);
+        sideCamera.gameObject.SetActive(true);
     }
 
     private void SwitchToSideCamera()
     {
-        topCamera.gameObject.SetActive(false);
-        sideCamera.gameObject.SetActive(true);
+        topCamera.gameObject.SetActive(true);
+        sideCamera.gameObject.SetActive(false);
     }
 }
