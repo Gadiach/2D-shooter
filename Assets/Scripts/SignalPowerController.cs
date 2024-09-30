@@ -1,5 +1,8 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class SignalPowerController : MonoBehaviour
@@ -10,10 +13,22 @@ public class SignalPowerController : MonoBehaviour
     [SerializeField] private GameObject cameraPoint;
     [SerializeField] private Text distanceText;
     [SerializeField] private GameObject lowSignalTextObj;
+    [SerializeField] private Volume globalVolume;
+    private ColorAdjustments colorAdjustments;
+    private FilmGrain filmGrain;
+    private float firstMaxDistance = 250f;
+    private float secondMaxDistance = 260f;
+    private float thirdMaxDistance = 270f;
+    private float fourthMaxDistance = 280f;
 
     private bool coroutineIsActive = false;
     private Coroutine activeCoroutine = null;
 
+    private void Start()
+    {
+        colorAdjustments = GetColorAdjustment();
+        filmGrain = GetFilmGrain();       
+    }
 
     private void Update()
     {
@@ -24,16 +39,53 @@ public class SignalPowerController : MonoBehaviour
         SwitchSignalSticks();
 
         SwitchObjWithPause();
+        
+        UpdateEffects();
+    }
+
+    private void UpdateEffects()
+    {
+        if (distanceToPoint >= firstMaxDistance && distanceToPoint <= fourthMaxDistance)
+        {
+            float t = Mathf.InverseLerp(firstMaxDistance, fourthMaxDistance, distanceToPoint);
+
+            colorAdjustments.contrast.value = Mathf.Lerp(22f, -100f, t);
+           
+            filmGrain.intensity.value = Mathf.Lerp(0.06f, 0.95f, t);
+        }
+        else if (distanceToPoint < firstMaxDistance)
+        {
+            colorAdjustments.contrast.value = 22f;
+            filmGrain.intensity.value = 0.06f;
+        }
+    }
+
+    private FilmGrain GetFilmGrain()
+    {
+        if (globalVolume.profile.TryGet(out FilmGrain grain))
+        {
+            return filmGrain = grain;
+        }
+        return null;
+    }
+
+    private ColorAdjustments GetColorAdjustment()
+    {
+        if (globalVolume.profile.TryGet(out ColorAdjustments colorAdj))
+        {
+            return colorAdj;
+        }
+        return null;
     }
 
     private void SwitchObjWithPause()
     {
-        if(!coroutineIsActive && distanceToPoint >= 270)
+        if(!coroutineIsActive && distanceToPoint >= secondMaxDistance)
         {
             activeCoroutine = StartCoroutine(ToggleObject(lowSignalTextObj));
             coroutineIsActive = true;
         }
-        else if (coroutineIsActive && distanceToPoint < 270)
+        else if (coroutineIsActive && distanceToPoint < secondMaxDistance)
         {            
             StopCoroutine(activeCoroutine);
             coroutineIsActive = false;
@@ -58,21 +110,21 @@ public class SignalPowerController : MonoBehaviour
 
     private void SwitchSignalSticks()
     {
-        if (distanceToPoint >= 250f && distanceToPoint < 260f)
+        if (distanceToPoint >= firstMaxDistance && distanceToPoint < secondMaxDistance)
         {
             signalSticks[3].SetActive(false);
             signalSticks[2].SetActive(true);
         }
-        else if (distanceToPoint >= 260f && distanceToPoint < 270f)
+        else if (distanceToPoint >= secondMaxDistance && distanceToPoint < thirdMaxDistance)
         {
             signalSticks[2].SetActive(false);
             signalSticks[1].SetActive(true);
         }
-        else if (distanceToPoint >= 270f)
+        else if (distanceToPoint >= thirdMaxDistance)
         {
             signalSticks[1].SetActive(false);
         }
-        else if (distanceToPoint >= 280f)
+        else if (distanceToPoint >= fourthMaxDistance)
         {
             signalSticks[0].SetActive(false);
         }
